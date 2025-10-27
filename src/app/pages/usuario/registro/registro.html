@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>
+      Registro - Sistema de Nutrición Escolar
+    </title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css"
+    />
+    <style>
+      .step {
+        font-weight: 500;
+      }
+      .step.active {
+        color: #0d6efd;
+        font-weight: bold;
+      }
+      .step.completed {
+        color: #198754;
+      }
+      .form-step {
+        display: none;
+      }
+      .form-step.active {
+        display: block;
+      }
+      .validation-error {
+        display: none;
+      }
+      .floating-progress {
+        position: fixed;
+        bottom: 15px;
+        right: 20px;
+        background: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 6px 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      }
+    </style>
+  </head>
+  <body>
+    <main
+      id="maincontent"
+      class="d-flex align-items-center justify-content-center min-vh-100"
+      role="main"
+      tabindex="-1"
+    >
+      <div
+        class="auth-box registration-box w-100"
+        style="max-width: 600px"
+      >
+        <!-- Barra de progreso -->
+        <div class="progress-indicator mb-4">
+          <div
+            class="progress"
+            style="height: 4px"
+          >
+            <progress
+              id="registroProgress"
+              class="progress-bar"
+              value="33"
+              max="100"
+            ></progress>
+          </div>
+          <div
+            class="steps d-flex justify-content-between mt-2"
+          >
+            <span class="step active"
+              >Datos Personales</span
+            >
+            <span class="step"
+              >Información Académica</span
+            >
+            <span class="step">Finalizar</span>
+          </div>
+        </div>
+
+        <h1
+          id="registroTitle"
+          class="text-center mb-4"
+        >
+          Registro de Estudiante
+        </h1>
+
+        <form
+          id="registroForm"
+          class="needs-validation"
+          novalidate
+        >
+          <!-- Paso 1 -->
+          <div
+            class="form-step active"
+            data-step="1"
+          >
+            <div class="mb-3">
+              <label
+                for="nombres"
+                class="form-label"
+                >Nombres</label
+              >
+              <input
+                type="text"
+                id="nombres"
+                name="nombres"
+                class="form-control"
+                required
+              />
+              <div
+                class="validation-error text-danger small"
+              ></div>
+            </div>
+
+            <div class="mb-3">
+              <label
+                for="apellidos"
+                class="form-label"
+                >Apellidos</label
+              >
+              <input
+                type="text"
+                id="apellidos"
+                name="apellidos"
+                class="form-control"
+                required
+              />
+              <div
+                class="validation-error text-danger small"
+              ></div>
+            </div>
+
+            <div class="mb-3">
+              <label
+                for="fecha_nacimiento"
+                class="form-label"
+                >Fecha de Nacimiento</label
+              >
+              <input
+                type="date"
+                id="fecha_nacimiento"
+                name="fecha_nacimiento"
+                class="form-control"
+                required
+              />
+              <div
+                class="validation-error text-danger small"
+              ></div>
+            </div>
+
+            <div class="mb-3">
+              <label
+                for="telefono"
+                class="form-label"
+                >Teléfono</label
+              >
+              <input
+                type="tel"
+                id="telefono"
+                name="telefono"
+                class="form-control"
+                required
+              />
+              <div
+                class="validation-error text-danger small"
+              ></div>
+            </div>
+
+            <div class="mb-3">
+              <label
+                for="cedula"
+                class="form-label"
+                >Cédula</label
+              >
+              <input
+                type="text"
+                id="cedula"
+                name="cedula"
+                class="form-control"
+                required
+              />
+              <div
+                class="validation-error text-danger small"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Paso 2 -->
+          <div class="form-step" data-step="2">
+            <div class="mb-3">
+              <label
+                for="curso"
+                class="form-label"
+                >Curso</label
+              >
+              <input
+                type="text"
+                id="representante"
+                name="representante"
+                class="form-control"
+                placeholder="1, 2, 3, etc. solo escriba números"
+                required
+              />
+              <div
+                class="validation-error text-danger small"
+              ></div>
+            </div>
+
+            <div class="mb-3">
+              <label
+                for="escuela"
+                class="form-label"
+                >Escuela</label
+              >
+              <input
+                type="text"
+                id="escuela"
+                name="escuela"
+                class="form-control"
+                required
+              />
+              <div
+                class="validation-error text-danger small"
+              ></div>
+            </div>
+
+            <div class="mb-3">
+              <label
+                for="nombre_padre"
+                class="form-label"
+                >Nombre del Padre</label
+              >
+              <input
+                type="text"
+                id="nombre_padre"
+                name="nombre_padre"
+                class="form-control"
+                required
+              />
+              <div
+                class="validation-error text-danger small"
+              ></div>
+            </div>
+
+            <div class="mb-3">
+              <label
+                for="nombre_madre"
+                class="form-label"
+                >Nombre de la Madre</label
+              >
+              <input
+                type="text"
+                id="nombre_madre"
+                name="nombre_madre"
+                class="form-control"
+                required
+              />
+              <div
+                class="validation-error text-danger small"
+              ></div>
+            </div>
+
+            <div class="mb-3">
+              <label
+                for="representante"
+                class="form-label"
+                >Representante:</label
+              >
+              <input
+                type="text"
+                id="representante"
+                name="representante"
+                class="form-control"
+                placeholder="Nombre completo del representante"
+                required
+              />
+              <div
+                class="validation-error text-danger"
+              ></div>
+            </div>
+
+            <hr />
+            <h5>Credenciales de acceso</h5>
+            <div class="mb-3">
+              <label
+                for="password"
+                class="form-label"
+                >Contraseña</label
+              >
+              <input
+                type="password"
+                id="password"
+                name="password"
+                class="form-control"
+                required
+              />
+              <div
+                class="validation-error text-danger small"
+              ></div>
+            </div>
+
+            <div class="mb-3">
+              <label
+                for="confirmar_password"
+                class="form-label"
+                >Confirmar Contraseña</label
+              >
+              <input
+                type="password"
+                id="confirmar_password"
+                name="confirmar_password"
+                class="form-control"
+                required
+              />
+              <div
+                class="validation-error text-danger small"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Paso 3: Resumen -->
+          <div class="form-step" data-step="3">
+            <h4 class="text-center mb-3">
+              Resumen del Registro
+            </h4>
+            <div
+              id="resumenDatos"
+              class="border rounded p-3 bg-light"
+            ></div>
+          </div>
+
+          <!-- Botones -->
+          <div
+            class="d-flex justify-content-between mt-4"
+          >
+            <button
+              type="button"
+              id="btnAtras"
+              class="btn btn-secondary"
+              disabled
+            >
+              <i class="bi bi-arrow-left"></i>
+              Atrás
+            </button>
+            <button
+              type="button"
+              id="btnSiguiente"
+              class="btn btn-primary"
+            >
+              Siguiente
+              <i class="bi bi-arrow-right"></i>
+            </button>
+          </div>
+        </form>
+
+        <div class="mt-4 text-center">
+          <a
+            href="../../auth/login/login.html"
+            class="auth-link"
+          >
+            <i
+              class="bi bi-box-arrow-in-right"
+            ></i>
+            ¿Ya tienes cuenta? Inicia sesión aquí
+          </a>
+        </div>
+      </div>
+
+      <div class="floating-progress">
+        <div class="progress-text">
+          <span id="progressText"
+            >Paso 1 de 3</span
+          >
+        </div>
+      </div>
+    </main>
+
+    <footer class="mt-4 text-center text-muted">
+      <small
+        >&copy; 2025 Sistema de Nutrición
+        Escolar.</small
+      >
+    </footer>
+
+    <script src="registro.js" defer></script>
+  </body>
+</html>
