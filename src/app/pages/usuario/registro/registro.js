@@ -365,6 +365,9 @@ function guardarRegistro() {
     estudiante.representante
   );
 
+  estudiante.activo = false; // Usuario no activo hasta autorizar
+  estudiante.pendiente = true;
+
   const estudiantes = JSON.parse(
     localStorage.getItem("estudiantes") || "[]"
   );
@@ -411,7 +414,7 @@ function guardarRegistro() {
     nombre: estudiante.representante,
     estudianteUsuario: nombreUsuario,
     usuario: nombreUsuario + "_rep",
-    contrasena: estudiante.password, 
+    contrasena: estudiante.password,
     rol: "representante",
   });
 

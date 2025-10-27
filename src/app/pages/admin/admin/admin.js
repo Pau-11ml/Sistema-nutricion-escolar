@@ -1,6 +1,4 @@
-// admin.js - Panel de administración escolar
-
-// Filtrar usuarios
+// === Filtrar usuarios ===
 function filtrarUsuarios(usuarios, termino) {
   termino = termino.toLowerCase().trim();
   return usuarios.filter(
@@ -13,6 +11,14 @@ function filtrarUsuarios(usuarios, termino) {
   );
 }
 
+// === Guardar usuarios en localStorage ===
+function guardarUsuarios(usuarios) {
+  localStorage.setItem(
+    "estudiantes",
+    JSON.stringify(usuarios)
+  );
+}
+
 document.addEventListener(
   "DOMContentLoaded",
   function () {
@@ -20,12 +26,10 @@ document.addEventListener(
     const usuarioActivo = JSON.parse(
       localStorage.getItem("usuarioActivo")
     );
-
     if (
       !usuarioActivo ||
       usuarioActivo.rol !== "admin"
     ) {
-      // Redirige al login si no hay usuario activo o no es admin
       location.href = "../auth/login/login.html";
       return;
     }
@@ -44,10 +48,6 @@ document.addEventListener(
       document.getElementById("statsRow");
     const btnExportarDatos =
       document.getElementById("btnExportarDatos");
-    const btnEnviarNotificacion =
-      document.getElementById(
-        "btnEnviarNotificacion"
-      );
     const sinUsuarios = document.getElementById(
       "sinUsuarios"
     );
@@ -64,11 +64,13 @@ document.addEventListener(
     function renderizarTabla(usuarios) {
       if (!tablaUsuarios) return;
       tablaUsuarios.innerHTML = "";
+
       if (usuarios.length === 0) {
         sinUsuarios.style.display = "block";
       } else {
         sinUsuarios.style.display = "none";
       }
+
       for (const u of usuarios) {
         const fila = document.createElement("tr");
         fila.innerHTML = `
@@ -77,6 +79,11 @@ document.addEventListener(
         <td>${u.cedula || "-"}</td>
         <td>${u.curso || "-"}</td>
         <td class="text-center">
+          ${
+            u.pendiente
+              ? `<button class="btn btn-success btn-sm" data-autorizar="${u.usuario}">Autorizar</button>`
+              : ""
+          }
           <button class="btn btn-danger btn-sm" data-usuario="${
             u.usuario
           }">Eliminar</button>
@@ -94,15 +101,11 @@ document.addEventListener(
 
       const total = usuarios.length;
       const activos = usuarios.filter(
-        (u) => u.activo !== false
+        (u) => u.activo
       ).length;
       const pendientes = usuarios.filter(
-        (u) => u.pendiente === true
+        (u) => u.pendiente
       ).length;
-      const asistencia =
-        total > 0
-          ? Math.round((activos / total) * 100)
-          : 0;
 
       statsRow.innerHTML = `
       <div class="col-md-3">
@@ -132,25 +135,32 @@ document.addEventListener(
           </div>
         </div>
       </div>
-      <div class="col-md-3">
-        <div class="stats-card bg-info text-white">
-          <div class="stats-icon"><i class="bi bi-graph-up"></i></div>
-          <div class="stats-info">
-            <h3 class="h2 mb-2">${asistencia}%</h3>
-            <p class="mb-0">Asistencia</p>
-          </div>
-        </div>
-      </div>
     `;
     }
 
-    // Eliminar usuario
+    // Manejo de clics: Autorizar o Eliminar
     tablaUsuarios?.addEventListener(
       "click",
       function (e) {
-        if (
-          e.target.matches("button[data-usuario]")
-        ) {
+        const autorizar =
+          e.target.dataset.autorizar;
+        let usuarios = cargarUsuarios();
+
+        if (autorizar) {
+          // Autorizar usuario
+          usuarios = usuarios.map((u) => {
+            if (u.usuario === autorizar) {
+              u.pendiente = false;
+              u.activo = true;
+            }
+            return u;
+          });
+          guardarUsuarios(usuarios);
+          renderizarTabla(usuarios);
+          renderizarEstadisticas(usuarios);
+        }
+
+        if (e.target.dataset.usuario) {
           const usuario =
             e.target.dataset.usuario;
           if (
@@ -158,14 +168,10 @@ document.addEventListener(
               `¿Estás seguro de eliminar al usuario "${usuario}"?`
             )
           ) {
-            let usuarios = cargarUsuarios();
             usuarios = usuarios.filter(
               (u) => u.usuario !== usuario
             );
-            localStorage.setItem(
-              "estudiantes",
-              JSON.stringify(usuarios)
-            );
+            guardarUsuarios(usuarios);
             renderizarTabla(usuarios);
             renderizarEstadisticas(usuarios);
           }
@@ -215,17 +221,7 @@ document.addEventListener(
       }
     );
 
-    // Enviar notificación
-    btnEnviarNotificacion?.addEventListener(
-      "click",
-      function () {
-        alert(
-          "Funcionalidad de notificación aún no implementada."
-        );
-      }
-    );
-
-    // Inicializar tabla y estadísticas
+    // Inicializar
     const usuarios = cargarUsuarios();
     renderizarTabla(usuarios);
     renderizarEstadisticas(usuarios);

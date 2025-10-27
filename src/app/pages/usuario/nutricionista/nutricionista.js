@@ -184,11 +184,6 @@ document.addEventListener(
             cena: formData.get(`${dia}_cena`),
           };
         }
-        observaciones[est.usuario] = nuevoMenu;
-        localStorage.setItem(
-          "observaciones",
-          JSON.stringify(observaciones)
-        );
         alert("✅ Menú guardado correctamente.");
       });
     }
