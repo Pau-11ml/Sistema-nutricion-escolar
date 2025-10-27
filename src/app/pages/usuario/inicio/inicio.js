@@ -154,11 +154,7 @@ document.addEventListener(
                  <td>${infoNutricional.menuSemanal[dia].merienda}</td>
                </tr>`;
       }
-      html += `</tbody></table>
-             <p><strong>Observaciones del nutricionista:</strong> ${
-               infoNutricional.observaciones ||
-               "Ninguna"
-             }</p>
+      html += `</tbody></table  >
            </div>
          </div>
        </div>`;

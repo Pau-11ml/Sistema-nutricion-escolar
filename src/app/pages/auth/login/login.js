@@ -1,4 +1,4 @@
-// --- Helper functions moved to outer scope ---
+// --- Helper functions ---
 function mostrarError(el, msg) {
   const err = el.parentElement.nextElementSibling;
   if (
@@ -22,7 +22,7 @@ function limpiarError(el, globalError) {
     globalError.style.display = "none";
 }
 
-// --- Main script ---
+// --- Main login script ---
 document.addEventListener(
   "DOMContentLoaded",
   () => {
@@ -34,7 +34,7 @@ document.addEventListener(
       'button[type="submit"]'
     );
 
-    // Crear mensaje global de error
+    // Mensaje global de error
     const globalError =
       document.createElement("div");
     globalError.className =
@@ -74,9 +74,9 @@ document.addEventListener(
       }
     });
 
+    // --- Submit ---
     form.addEventListener("submit", (e) => {
       e.preventDefault();
-
       const usuario = usuarioInput.value.trim();
       const contrasena =
         contrasenaInput.value.trim();
@@ -95,39 +95,51 @@ document.addEventListener(
           "La contraseña es obligatoria"
         );
 
-      // Spinner en botón
+      // Spinner
       submitBtn.disabled = true;
       const originalText = submitBtn.innerHTML;
       submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Iniciando...`;
 
       setTimeout(() => {
-        // Simula tiempo de carga
-        const usuarios = [
+        // Usuarios fijos
+        const usuariosFijos = [
           {
             usuario: "admin",
             contrasena: "admin123",
             rol: "admin",
           },
-          {
-            usuario: "nutri",
-            contrasena: "nutri123",
-            rol: "nutricionista",
-          },
         ];
 
-        const estudiantes = JSON.parse(
-          localStorage.getItem("estudiantes") ||
-            "[]"
+        // Obtener nutricionistas creados por admin
+        const nutricionistas = JSON.parse(
+          localStorage.getItem(
+            "nutricionistas"
+          ) || "[]"
         );
 
+        // Obtener representantes creados al registrar estudiantes
+        const representantes = JSON.parse(
+          localStorage.getItem(
+            "representantes"
+          ) || "[]"
+        );
+
+        // Buscar usuario
         const usuarioEncontrado =
-          usuarios.find(
+          usuariosFijos.find(
             (u) =>
               u.usuario === usuario &&
               u.contrasena === contrasena
           ) ||
-          estudiantes.find(
-            (e) => e.usuario === usuario
+          nutricionistas.find(
+            (n) =>
+              n.usuario === usuario &&
+              n.contrasena === contrasena
+          ) ||
+          representantes.find(
+            (r) =>
+              r.usuario === usuario &&
+              r.contrasena === contrasena
           );
 
         if (!usuarioEncontrado) {
@@ -139,37 +151,19 @@ document.addEventListener(
           return;
         }
 
-        // Validación estudiante
-        if (usuarioEncontrado.fecha_nacimiento) {
-          const fecha = new Date(
-            usuarioEncontrado.fecha_nacimiento
-          );
-          const claveEsperada = fecha
-            .toISOString()
-            .split("T")[0]
-            .replaceAll("-", "");
-          if (contrasena !== claveEsperada) {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
-            return mostrarError(
-              contrasenaInput,
-              "Contraseña incorrecta"
-            );
-          }
-        }
-
+        // Guardar sesión
         localStorage.setItem(
           "usuarioActivo",
           JSON.stringify(usuarioEncontrado)
         );
 
-        const rol =
-          usuarioEncontrado.rol || "estudiante";
+        // Redirección por rol
+        const rol = usuarioEncontrado.rol;
         const rutas = {
           admin: "../../admin/admin/admin.html",
           nutricionista:
             "../../usuario/nutricionista/nutricionista.html",
-          padre:
+          representante:
             "../../usuario/inicio/inicio.html",
         };
 
@@ -177,6 +171,7 @@ document.addEventListener(
       }, 800);
     });
 
+    // --- Limpiar errores al escribir ---
     usuarioInput.addEventListener("input", (e) =>
       limpiarError(e.target, globalError)
     );

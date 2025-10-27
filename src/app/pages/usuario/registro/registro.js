@@ -81,10 +81,8 @@ const pasosTexto =
   document.querySelectorAll(".step");
 
 function mostrarPaso() {
-  for (const p of pasos) {
+  for (const p of pasos)
     p.classList.remove("active");
-  }
-
   pasos[pasoActual - 1].classList.add("active");
 
   // Actualizar la barra de progreso
@@ -106,13 +104,17 @@ function mostrarPaso() {
 
     index++;
   }
+
+  // Botones
+  btnAtras.disabled = pasoActual === 1;
+  btnSiguiente.textContent =
+    pasoActual === totalPasos
+      ? "Finalizar"
+      : "Siguiente";
 }
 
-btnAtras.disabled = pasoActual === 1;
-btnSiguiente.textContent =
-  pasoActual === totalPasos
-    ? "Finalizar"
-    : "Siguiente";
+btnAtras.disabled = true;
+btnSiguiente.textContent = "Siguiente";
 
 btnSiguiente.addEventListener("click", () => {
   if (pasoActual < totalPasos) {
@@ -293,6 +295,9 @@ function generarResumen() {
   const madre = capitalizarPalabras(
     datos.nombre_madre
   );
+  const representante = capitalizarPalabras(
+    datos.representante
+  );
   const edad = calcularEdad(
     datos.fecha_nacimiento
   );
@@ -316,20 +321,19 @@ function generarResumen() {
       <li class="list-group-item"><strong>Escuela:</strong> ${escuela}</li>
       <li class="list-group-item"><strong>Padre:</strong> ${padre}</li>
       <li class="list-group-item"><strong>Madre:</strong> ${madre}</li>
-      <li class="list-group-item"><strong>Representante:</strong> ${estudiante.representante}</li>
+      <li class="list-group-item"><strong>Representante:</strong> ${representante}</li>
       <li class="list-group-item bg-light"><strong>Usuario generado:</strong> ${nombreUsuario}</li>
     </ul>
   `;
 }
 
-// === Actualizar edad en el resumen cuando cambie la fecha ===
+// === Actualizar edad en el resumen ===
 function actualizarEdadEnResumen(edad) {
   const resumenEdad = document.getElementById(
     "resumenEdad"
   );
-  if (resumenEdad) {
+  if (resumenEdad)
     resumenEdad.innerHTML = `<strong>Edad:</strong> ${edad} años`;
-  }
 }
 
 // === Guardar en localStorage ===
@@ -356,6 +360,9 @@ function guardarRegistro() {
   );
   estudiante.nombre_madre = capitalizarPalabras(
     estudiante.nombre_madre
+  );
+  estudiante.representante = capitalizarPalabras(
+    estudiante.representante
   );
 
   const estudiantes = JSON.parse(
@@ -399,11 +406,15 @@ function guardarRegistro() {
   const representantes = JSON.parse(
     localStorage.getItem("representantes") || "[]"
   );
+
   representantes.push({
     nombre: estudiante.representante,
     estudianteUsuario: nombreUsuario,
-    usuario: nombreUsuario + "_rep", // generar usuario para representante
+    usuario: nombreUsuario + "_rep",
+    contrasena: estudiante.password, 
+    rol: "representante",
   });
+
   localStorage.setItem(
     "representantes",
     JSON.stringify(representantes)

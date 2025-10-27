@@ -81,19 +81,16 @@ const pasosTexto =
   document.querySelectorAll(".step");
 
 function mostrarPaso() {
-  // Activar solo el paso actual
-  for (const p of pasos) {
+  for (const p of pasos)
     p.classList.remove("active");
-  }
   pasos[pasoActual - 1].classList.add("active");
 
-  // Actualizar barra de progreso
+  // Actualizar la barra de progreso
   barraProgreso.style.width = `${
     (pasoActual / totalPasos) * 100
   }%`;
   textoProgreso.textContent = `Paso ${pasoActual} de ${totalPasos}`;
 
-  // Actualizar indicadores de texto (círculos o títulos)
   let index = 0;
   for (const s of pasosTexto) {
     s.classList.remove("active", "completed");
@@ -107,21 +104,12 @@ function mostrarPaso() {
     index++;
   }
 
-  // ✅ Actualizar estado del botón Atrás
   btnAtras.disabled = pasoActual === 1;
-
-  // Actualizar texto del botón Siguiente
   btnSiguiente.textContent =
     pasoActual === totalPasos
       ? "Finalizar"
       : "Siguiente";
 }
-
-btnAtras.disabled = pasoActual === 1;
-btnSiguiente.textContent =
-  pasoActual === totalPasos
-    ? "Finalizar"
-    : "Siguiente";
 
 btnSiguiente.addEventListener("click", () => {
   if (pasoActual < totalPasos) {
@@ -161,9 +149,13 @@ function validarPaso(paso) {
       );
       valido = false;
     } else if (
-      (campo.name === "nombres" ||
-        campo.name === "apellidos" ||
-        campo.name.includes("nombre")) &&
+      [
+        "nombres",
+        "apellidos",
+        "nombre_padre",
+        "nombre_madre",
+        "representante",
+      ].includes(campo.name) &&
       !validarTexto(valor)
     ) {
       mostrarError(
@@ -181,21 +173,21 @@ function validarPaso(paso) {
       );
       valido = false;
     } else if (
-      campo.name === "fecha_nacimiento" &&
-      !validarFechaNacimiento(valor)
-    ) {
-      mostrarError(
-        campo,
-        "La edad debe estar entre 4 y 13 años"
-      );
-      valido = false;
-    } else if (
       campo.name === "cedula" &&
       !validarCedula(valor)
     ) {
       mostrarError(
         campo,
         "La cédula debe tener 10 dígitos numéricos"
+      );
+      valido = false;
+    } else if (
+      campo.name === "fecha_nacimiento" &&
+      !validarFechaNacimiento(valor)
+    ) {
+      mostrarError(
+        campo,
+        "La edad debe estar entre 4 y 13 años"
       );
       valido = false;
     }
@@ -256,28 +248,38 @@ function limpiarError(elemento) {
 const fechaInput = document.getElementById(
   "fecha_nacimiento"
 );
-const edadLabel = document.createElement("small");
-edadLabel.className = "text-muted d-block mt-1";
-fechaInput.parentElement.appendChild(edadLabel);
+if (fechaInput) {
+  const edadLabel =
+    document.createElement("small");
+  edadLabel.className = "text-muted d-block mt-1";
+  fechaInput.parentElement.appendChild(edadLabel);
 
-fechaInput.addEventListener(
-  "change",
-  function () {
-    const fecha = this.value;
-    if (fecha && validarFechaNacimiento(fecha)) {
-      const edad = calcularEdad(fecha);
-      edadLabel.textContent = `Edad: ${edad} años`;
-      limpiarError(this);
-      actualizarEdadEnResumen(edad);
-    } else {
-      edadLabel.textContent = "";
-      mostrarError(
-        this,
-        "La edad debe estar entre 4 y 13 años"
-      );
+  fechaInput.addEventListener(
+    "change",
+    function () {
+      const fecha = this.value;
+      if (
+        fecha &&
+        validarFechaNacimiento(fecha)
+      ) {
+        const edad = calcularEdad(fecha);
+        edadLabel.textContent = `Edad: ${edad} años`;
+        limpiarError(this);
+        actualizarEdadEnResumen(edad);
+        if (
+          document.getElementById("resumenDatos")
+        )
+          generarResumen();
+      } else {
+        edadLabel.textContent = "";
+        mostrarError(
+          this,
+          "La edad debe estar entre 4 y 13 años"
+        );
+      }
     }
-  }
-);
+  );
+}
 
 // === Generar resumen ===
 function generarResumen() {
@@ -302,9 +304,13 @@ function generarResumen() {
   const madre = capitalizarPalabras(
     datos.nombre_madre
   );
+  const representante = capitalizarPalabras(
+    datos.representante
+  );
   const edad = calcularEdad(
     datos.fecha_nacimiento
   );
+
   const nombreUsuario =
     nombres.toLowerCase().split(" ")[0] +
     apellidos.toLowerCase().split(" ")[0];
@@ -324,20 +330,19 @@ function generarResumen() {
       <li class="list-group-item"><strong>Escuela:</strong> ${escuela}</li>
       <li class="list-group-item"><strong>Padre:</strong> ${padre}</li>
       <li class="list-group-item"><strong>Madre:</strong> ${madre}</li>
-      <li class="list-group-item"><strong>Representante:</strong> ${estudiante.representante}</li>
+      <li class="list-group-item"><strong>Representante:</strong> ${representante}</li>
       <li class="list-group-item bg-light"><strong>Usuario generado:</strong> ${nombreUsuario}</li>
     </ul>
   `;
 }
 
-// === Actualizar edad en el resumen cuando cambie la fecha ===
+// === Actualizar edad en el resumen ===
 function actualizarEdadEnResumen(edad) {
   const resumenEdad = document.getElementById(
     "resumenEdad"
   );
-  if (resumenEdad) {
+  if (resumenEdad)
     resumenEdad.innerHTML = `<strong>Edad:</strong> ${edad} años`;
-  }
 }
 
 // === Guardar en localStorage ===
@@ -347,7 +352,6 @@ function guardarRegistro() {
   );
   const estudiante = Object.fromEntries(formData);
 
-  // Capitalizar nombres y demás campos
   estudiante.nombres = capitalizarPalabras(
     estudiante.nombres
   );
@@ -368,24 +372,13 @@ function guardarRegistro() {
   );
   estudiante.representante = capitalizarPalabras(
     estudiante.representante
-  ); // <-- Nuevo
+  );
 
-  // Usuario estudiante
-  const nombreUsuario =
-    estudiante.nombres
-      .toLowerCase()
-      .split(" ")[0] +
-    estudiante.apellidos
-      .toLowerCase()
-      .split(" ")[0];
-  estudiante.usuario = nombreUsuario;
-  estudiante.fecha_registro =
-    new Date().toISOString();
-
-  // Guardar en estudiantes
   const estudiantes = JSON.parse(
     localStorage.getItem("estudiantes") || "[]"
   );
+
+  // Evitar duplicados
   if (
     estudiantes.some(
       (e) =>
@@ -400,6 +393,29 @@ function guardarRegistro() {
     );
     return;
   }
+
+  // Generar usuario único
+  let baseUsuario =
+    estudiante.nombres
+      .toLowerCase()
+      .split(" ")[0] +
+    estudiante.apellidos
+      .toLowerCase()
+      .split(" ")[0];
+  let nombreUsuario = baseUsuario;
+  let contador = 1;
+  while (
+    estudiantes.some(
+      (e) => e.usuario === nombreUsuario
+    )
+  ) {
+    nombreUsuario = baseUsuario + contador++;
+  }
+
+  estudiante.usuario = nombreUsuario;
+  estudiante.fecha_registro =
+    new Date().toISOString();
+
   estudiantes.push(estudiante);
   localStorage.setItem(
     "estudiantes",
@@ -410,11 +426,15 @@ function guardarRegistro() {
   const representantes = JSON.parse(
     localStorage.getItem("representantes") || "[]"
   );
+
   representantes.push({
     nombre: estudiante.representante,
     estudianteUsuario: nombreUsuario,
-    usuario: nombreUsuario + "_rep", // generar usuario para representante
+    usuario: nombreUsuario + "_rep",
+    contrasena: estudiante.password,
+    rol: "representante",
   });
+
   localStorage.setItem(
     "representantes",
     JSON.stringify(representantes)
@@ -423,10 +443,11 @@ function guardarRegistro() {
   alert(
     `✅ Registro exitoso!\nUsuario estudiante: ${nombreUsuario}\nUsuario representante: ${nombreUsuario}_rep`
   );
+
   setTimeout(
     () =>
       (location.href =
-        "../../auth/login/login.html"),
+        "../../admin/admin/admin.html    "),
     1500
   );
 }
