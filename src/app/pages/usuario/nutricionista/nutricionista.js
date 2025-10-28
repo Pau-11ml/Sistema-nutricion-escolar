@@ -85,11 +85,14 @@ document.addEventListener(
     }
 
     function mostrarMenuSemanal(est) {
-      const observaciones = JSON.parse(
-        localStorage.getItem("observaciones") ||
+      // Recuperar el almacenamiento correcto
+      const menuSemanal = JSON.parse(
+        localStorage.getItem("menuSemanal") ||
           "{}"
       );
-      const menu = observaciones[est.usuario] || {
+
+      // Si no hay menú guardado para este estudiante, se crea uno vacío
+      const menu = menuSemanal[est.usuario] || {
         lunes: {
           desayuno: "",
           almuerzo: "",
@@ -122,6 +125,7 @@ document.addEventListener(
         },
       };
 
+      // Mostrar el formulario editable
       menuSemanalDiv.innerHTML = `
       <h2>Menú Semanal Editable</h2>
       <form id="formMenuSemanal">
@@ -163,6 +167,7 @@ document.addEventListener(
       </form>
     `;
 
+      // Guardar los cambios
       const form = document.getElementById(
         "formMenuSemanal"
       );
@@ -170,6 +175,7 @@ document.addEventListener(
         e.preventDefault();
         const formData = new FormData(form);
         const nuevoMenu = {};
+
         for (const dia of Object.keys(menu)) {
           nuevoMenu[dia] = {
             desayuno: formData.get(
@@ -184,10 +190,18 @@ document.addEventListener(
             cena: formData.get(`${dia}_cena`),
           };
         }
+
+        // Guardar en la clave que usa el representante
+        menuSemanal[est.usuario] = nuevoMenu;
+        localStorage.setItem(
+          "menuSemanal",
+          JSON.stringify(menuSemanal)
+        );
         alert("✅ Menú guardado correctamente.");
       });
     }
 
+    // Cerrar sesión
     btnCerrarSesion?.addEventListener(
       "click",
       () => {

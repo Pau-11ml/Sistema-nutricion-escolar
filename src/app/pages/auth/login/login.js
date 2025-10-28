@@ -117,29 +117,44 @@ document.addEventListener(
           ) || "[]"
         );
 
-        // Obtener representantes creados al registrar estudiantes
+        // Obtener representantes
         const representantes = JSON.parse(
           localStorage.getItem(
             "representantes"
           ) || "[]"
         );
 
+        // Obtener estudiantes
+        const estudiantes = JSON.parse(
+          localStorage.getItem("estudiantes") ||
+            "[]"
+        );
+
         // Buscar usuario
-        const usuarioEncontrado =
+        let usuarioEncontrado =
           usuariosFijos.find(
             (u) =>
-              u.usuario === usuario &&
+              (u.usuario === usuario ||
+                u.correo === usuario) &&
               u.contrasena === contrasena
           ) ||
           nutricionistas.find(
             (n) =>
-              n.usuario === usuario &&
+              (n.usuario === usuario ||
+                n.correo === usuario) &&
               n.contrasena === contrasena
           ) ||
           representantes.find(
             (r) =>
-              r.usuario === usuario &&
+              (r.usuario === usuario ||
+                r.correo === usuario) &&
               r.contrasena === contrasena
+          ) ||
+          estudiantes.find(
+            (s) =>
+              (s.usuario === usuario ||
+                s.correo === usuario) &&
+              s.password === contrasena
           );
 
         if (!usuarioEncontrado) {
@@ -151,6 +166,16 @@ document.addEventListener(
           return;
         }
 
+        // Verificar que el estudiante esté activo
+        if (usuarioEncontrado.pendiente) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
+          globalError.style.display = "block";
+          globalError.textContent =
+            "⚠️ Tu cuenta aún no ha sido autorizada";
+          return;
+        }
+
         // Guardar sesión
         localStorage.setItem(
           "usuarioActivo",
@@ -158,12 +183,27 @@ document.addEventListener(
         );
 
         // Redirección por rol
-        const rol = usuarioEncontrado.rol;
+        let rol = usuarioEncontrado.rol;
+
+        if (!rol) {
+          if (usuarioEncontrado.esNutricionista) {
+            rol = "nutricionista";
+          } else if (
+            usuarioEncontrado.esRepresentante
+          ) {
+            rol = "representante";
+          } else {
+            rol = "estudiante";
+          }
+        }
+
         const rutas = {
           admin: "../../admin/admin/admin.html",
           nutricionista:
             "../../usuario/nutricionista/nutricionista.html",
           representante:
+            "../../usuario/inicio/inicio.html",
+          estudiante:
             "../../usuario/inicio/inicio.html",
         };
 

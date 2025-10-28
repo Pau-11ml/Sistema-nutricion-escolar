@@ -196,23 +196,19 @@
           <!-- Paso 2 -->
           <div class="form-step" data-step="2">
             <div class="mb-3">
-              <label
-                for="curso"
-                class="form-label"
-                >Curso</label
-              >
-              <input
-                type="text"
-                id="curso"
-                name="curso"
-                class="form-control"
-                placeholder="1, 2, 3, etc. solo escriba números"
-                required
-              />
-              <div
-                class="validation-error text-danger small"
-              ></div>
+              <label for="curso" class="form-label">Curso</label>
+              <select id="curso" name="curso" class="form-select" required>
+                <option value="">Seleccione un curso</option>
+                <option value="1">1ro Básico</option>
+                <option value="2">2do Básico</option>
+                <option value="3">3ro Básico</option>
+                <option value="4">4to Básico</option>
+                <option value="5">5to Básico</option>
+                <option value="6">6to Básico</option>
+              </select>
             </div>
+          </div>
+
 
             <div class="mb-3">
               <label

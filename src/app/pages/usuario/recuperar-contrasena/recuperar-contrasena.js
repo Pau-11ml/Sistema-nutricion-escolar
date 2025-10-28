@@ -1,32 +1,47 @@
-// recuperar-contrasena.js
+function validarEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function validarPassword(pass) {
+  if (!pass || pass.length < 6)
+    return "La contraseña debe tener al menos 6 caracteres";
+  return null;
+}
+function mostrarErrorCampo(el, texto) {
+  if (!el) return;
+  el.textContent = texto;
+  el.style.display = "block";
+}
 document.addEventListener(
   "DOMContentLoaded",
   () => {
     const form = document.getElementById(
       "recuperarForm"
     );
-    const usuarioInput =
-      document.getElementById("usuario");
-    const cedulaInput =
-      document.getElementById("cedula");
+    const nombreInput =
+      document.getElementById("nombre");
+    const correoInput =
+      document.getElementById("correo");
     const nuevaConInput = document.getElementById(
       "nuevaContrasena"
     );
     const mensajeEl =
       document.getElementById("mensaje");
 
-    const usuarioRecError =
-      document.getElementById("usuarioRecError");
-    const cedulaRecError =
-      document.getElementById("cedulaRecError");
+    const nombreError = document.getElementById(
+      "nombreError"
+    );
+    const correoError = document.getElementById(
+      "correoError"
+    );
     const nuevaConError = document.getElementById(
       "nuevaConError"
     );
 
     function limpiarErrores() {
       [
-        usuarioRecError,
-        cedulaRecError,
+        nombreError,
+        correoError,
         nuevaConError,
       ].forEach((el) => {
         if (el) el.style.display = "none";
@@ -35,18 +50,10 @@ document.addEventListener(
       mensajeEl.className = "";
     }
 
-    function mostrarErrorCampo(el, texto) {
-      if (!el) return;
-      el.textContent = texto;
-      el.style.display = "block";
-      el.focus();
-    }
-
     function mostrarMensaje(
       texto,
       tipo = "info"
     ) {
-      // tipo: "info", "success", "error"
       mensajeEl.textContent = texto;
       mensajeEl.className =
         tipo === "success"
@@ -54,50 +61,42 @@ document.addEventListener(
           : tipo === "error"
           ? "text-danger"
           : "text-info";
-      // para accesibilidad
       mensajeEl.setAttribute(
         "aria-live",
         "polite"
       );
     }
 
-    function validarCedulaFormato(cedula) {
-      return /^\d{10}$/.test(cedula);
-    }
-
-    function validarPassword(pass) {
-      if (!pass || pass.length < 6)
-        return "La contraseña debe tener al menos 6 caracteres";
-      return null;
-    }
-
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       limpiarErrores();
 
-      const usuario = usuarioInput.value.trim();
-      const cedula = cedulaInput.value.trim();
+      const nombre = nombreInput.value
+        .trim()
+        .toLowerCase();
+      const correo = correoInput.value
+        .trim()
+        .toLowerCase();
       const nuevaCon = nuevaConInput.value.trim();
 
-      // Validaciones básicas
-      if (!usuario) {
+      if (!nombre) {
         mostrarErrorCampo(
-          usuarioRecError,
-          "Ingrese su usuario."
+          nombreError,
+          "Ingrese su nombre completo."
         );
         return;
       }
-      if (!cedula) {
+      if (!correo) {
         mostrarErrorCampo(
-          cedulaRecError,
-          "Ingrese su cédula."
+          correoError,
+          "Ingrese su correo electrónico."
         );
         return;
       }
-      if (!validarCedulaFormato(cedula)) {
+      if (!validarEmail(correo)) {
         mostrarErrorCampo(
-          cedulaRecError,
-          "La cédula debe tener 10 dígitos numéricos."
+          correoError,
+          "Correo no válido."
         );
         return;
       }
@@ -107,17 +106,15 @@ document.addEventListener(
         return;
       }
 
-      // Desactivar botón y mostrar feedback
       const submitBtn = form.querySelector(
         'button[type="submit"]'
       );
       const originalText = submitBtn.innerHTML;
       submitBtn.disabled = true;
-      submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Actualizando...`;
+      submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Verificando...`;
       mostrarMensaje("Buscando usuario...");
 
       setTimeout(() => {
-        // Cargar datos desde localStorage
         const representantes = JSON.parse(
           localStorage.getItem(
             "representantes"
@@ -134,182 +131,127 @@ document.addEventListener(
         );
         const usuarios = JSON.parse(
           localStorage.getItem("usuarios") || "[]"
-        ); // opcional, si lo usas
-
-        // 1) Intentar encontrar representante (y comprobar cédula en su estudiante vinculado)
-        let repIndex = representantes.findIndex(
-          (r) => r.usuario === usuario
         );
-        if (repIndex !== -1) {
-          const rep = representantes[repIndex];
-          // Buscar el estudiante vinculado por estudianteUsuario
-          const estudiante = estudiantes.find(
-            (s) =>
-              s.usuario === rep.estudianteUsuario
-          );
-          if (!estudiante) {
-            // no podemos verificar cédula si no hay estudiante vinculado
-            mostrarMensaje(
-              "No se pudo verificar la cédula: estudiante no encontrado. Contacte con el administrador.",
-              "error"
-            );
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
-            return;
-          }
-          if (estudiante.cedula !== cedula) {
-            mostrarMensaje(
-              "Cédula no coincide con el registro del representante.",
-              "error"
-            );
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
-            return;
-          }
 
-          // Todo OK: actualizar contraseña del representante
-          representantes[repIndex].contrasena =
-            nuevaCon;
-          // Asegurar rol si no existe
-          representantes[repIndex].rol =
-            representantes[repIndex].rol ||
-            "representante";
+        let actualizado = false;
+
+        // helper para actualizar contraseña
+        function actualizarPassword(
+          arr,
+          index,
+          campo
+        ) {
+          arr[index][campo] = nuevaCon;
           localStorage.setItem(
-            "representantes",
-            JSON.stringify(representantes)
+            arr === estudiantes
+              ? "estudiantes"
+              : arr === representantes
+              ? "representantes"
+              : arr === nutricionistas
+              ? "nutricionistas"
+              : "usuarios",
+            JSON.stringify(arr)
           );
+          actualizado = true;
+        }
+
+        // --- Buscar en estudiantes ---
+        const estIndex = estudiantes.findIndex(
+          (s) =>
+            s.nombres?.toLowerCase() === nombre &&
+            s.correo?.toLowerCase() === correo
+        );
+        if (estIndex !== -1) {
+          actualizarPassword(
+            estudiantes,
+            estIndex,
+            "password"
+          );
+        }
+
+        // --- Buscar en representantes ---
+        if (!actualizado) {
+          const repIndex =
+            representantes.findIndex(
+              (r) =>
+                r.nombre?.toLowerCase() ===
+                  nombre &&
+                r.correo?.toLowerCase() === correo
+            );
+          if (repIndex !== -1) {
+            actualizarPassword(
+              representantes,
+              repIndex,
+              "contrasena"
+            );
+          }
+        }
+
+        // --- Buscar en nutricionistas ---
+        if (!actualizado) {
+          const nutIndex =
+            nutricionistas.findIndex(
+              (n) =>
+                n.nombres?.toLowerCase() ===
+                  nombre &&
+                n.correo?.toLowerCase() === correo
+            );
+          if (nutIndex !== -1) {
+            actualizarPassword(
+              nutricionistas,
+              nutIndex,
+              "contrasena"
+            );
+          }
+        }
+
+        // --- Buscar en usuarios genéricos ---
+        if (!actualizado) {
+          const usuIndex = usuarios.findIndex(
+            (u) =>
+              u.nombres?.toLowerCase() ===
+                nombre &&
+              u.correo?.toLowerCase() === correo
+          );
+          if (usuIndex !== -1) {
+            actualizarPassword(
+              usuarios,
+              usuIndex,
+              "contrasena"
+            );
+          }
+        }
+
+        if (actualizado) {
           mostrarMensaje(
             "Contraseña actualizada correctamente. Redirigiendo al inicio de sesión...",
             "success"
           );
-
           setTimeout(() => {
-            // opcional: redirigir al login
             location.href =
               "../../auth/login/login.html";
-          }, 1200);
-
-          return;
+          }, 1300);
+        } else {
+          mostrarMensaje(
+            "No se encontró ningún usuario con esos datos. Verifique nombre y correo.",
+            "error"
+          );
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
         }
-
-        // 2) Intentar nutricionista (si existe y tiene campo cedula para validar)
-        let nutIndex = nutricionistas.findIndex(
-          (n) => n.usuario === usuario
-        );
-        if (nutIndex !== -1) {
-          const nut = nutricionistas[nutIndex];
-          if (nut.cedula) {
-            if (nut.cedula !== cedula) {
-              mostrarMensaje(
-                "Cédula no coincide con el registro del nutricionista.",
-                "error"
-              );
-              submitBtn.disabled = false;
-              submitBtn.innerHTML = originalText;
-              return;
-            }
-            // actualizar contraseña
-            nutricionistas[nutIndex].contrasena =
-              nuevaCon;
-            localStorage.setItem(
-              "nutricionistas",
-              JSON.stringify(nutricionistas)
-            );
-            mostrarMensaje(
-              "Contraseña actualizada correctamente. Redirigiendo al inicio de sesión...",
-              "success"
-            );
-            setTimeout(
-              () =>
-                (location.href =
-                  "../../auth/login/login.html"),
-              1200
-            );
-            return;
-          } else {
-            // no hay cedula almacenada para nutricionista: pedir contactar admin
-            mostrarMensaje(
-              "No se puede verificar al nutricionista sin cédula almacenada. Contacte al administrador.",
-              "error"
-            );
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
-            return;
-          }
-        }
-
-        // 3) Intentar en 'usuarios' genéricos (si usas ese array y guardas cedula ahí)
-        let usuIndex = usuarios.findIndex(
-          (u) => u.usuario === usuario
-        );
-        if (usuIndex !== -1) {
-          const u = usuarios[usuIndex];
-          if (u.cedula) {
-            if (u.cedula !== cedula) {
-              mostrarMensaje(
-                "Cédula no coincide con el registro.",
-                "error"
-              );
-              submitBtn.disabled = false;
-              submitBtn.innerHTML = originalText;
-              return;
-            }
-            usuarios[usuIndex].contrasena =
-              nuevaCon;
-            localStorage.setItem(
-              "usuarios",
-              JSON.stringify(usuarios)
-            );
-            mostrarMensaje(
-              "Contraseña actualizada correctamente. Redirigiendo al inicio de sesión...",
-              "success"
-            );
-            setTimeout(
-              () =>
-                (location.href =
-                  "../../auth/login/login.html"),
-              1200
-            );
-            return;
-          } else {
-            mostrarMensaje(
-              "No se puede verificar el usuario sin cédula almacenada. Contacte al administrador.",
-              "error"
-            );
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
-            return;
-          }
-        }
-
-        // Si no encontró en ningún lado
-        mostrarMensaje(
-          "Usuario no encontrado o los datos no coinciden. Verifique e inténtelo de nuevo o contacte al administrador.",
-          "error"
-        );
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
       }, 700);
     });
 
-    // Limpieza de errores al escribir
-    usuarioInput.addEventListener("input", () => {
-      if (usuarioRecError)
-        usuarioRecError.style.display = "none";
-      mensajeEl.textContent = "";
-    });
-    cedulaInput.addEventListener("input", () => {
-      if (cedulaRecError)
-        cedulaRecError.style.display = "none";
-      mensajeEl.textContent = "";
-    });
-    nuevaConInput.addEventListener(
-      "input",
-      () => {
-        if (nuevaConError)
-          nuevaConError.style.display = "none";
-        mensajeEl.textContent = "";
-      }
+    // Limpiar mensajes al escribir
+    [
+      nombreInput,
+      correoInput,
+      nuevaConInput,
+    ].forEach((input) =>
+      input.addEventListener(
+        "input",
+        limpiarErrores
+      )
     );
   }
 );

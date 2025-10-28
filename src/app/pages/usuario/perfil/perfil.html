@@ -7,7 +7,8 @@
       content="width=device-width, initial-scale=1.0"
     />
     <title>
-      Perfil - Sistema de Nutrición Escolar
+      Perfil del estudiante - Sistema de Nutrición
+      Escolar
     </title>
     <link
       rel="stylesheet"
@@ -15,50 +16,37 @@
     />
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
     />
     <link
       rel="stylesheet"
       href="/src/assets/css/styles.css"
     />
     <style>
-      .skip-link {
-        position: absolute;
-        left: 0;
-        top: 0;
-        background: #000;
-        color: #fff;
-        padding: 8px 12px;
-        z-index: 1000;
-        transform: translateY(-120%);
-      }
-      .skip-link:focus {
-        transform: translateY(0);
+      .profile-img {
+        max-width: 200px;
+        border-radius: 50%;
       }
     </style>
   </head>
   <body>
-    <a class="skip-link" href="#maincontent"
-      >Saltar al contenido</a
+    <div
+      class="d-flex flex-column min-vh-100 bg-light"
     >
-    <header
-      class="bg-success text-white py-2 shadow-sm"
-      role="banner"
-    >
-      <div
-        class="container d-flex justify-content-between align-items-center"
+      <!-- Cabecera -->
+      <header
+        class="bg-success text-white py-2 shadow-sm"
       >
-        <nav
-          role="navigation"
-          aria-label="Navegación de usuario"
+        <div
+          class="container d-flex justify-content-between align-items-center"
         >
           <a
-            class="btn btn-light btn-sm"
-            href="../inicio/inicio.html"
-            >Inicio</a
+            href="inicio.html"
+            class="btn btn-outline-light btn-sm"
           >
-        </nav>
-        <div>
+            <i class="bi bi-house-door"></i>
+            Inicio
+          </a>
           <button
             class="btn btn-outline-light"
             type="button"
@@ -68,100 +56,207 @@
             Cerrar sesión
           </button>
         </div>
-      </div>
-    </header>
+      </header>
 
-    <main
-      id="maincontent"
-      class="d-flex align-items-center justify-content-center min-vh-100"
-      role="main"
-      tabindex="-1"
-    >
-      <div class="container py-4">
-        <a
-          class="btn btn-secondary mb-3"
-          href="../inicio/inicio.html"
-          >← Inicio</a
-        >
-        <div
-          class="row g-4 justify-content-center"
-        >
-          <aside
-            class="col-md-4 text-center"
-            aria-labelledby="fotoPerfilLabel"
-          >
-            <h2
-              id="fotoPerfilLabel"
-              class="visually-hidden"
-            >
-              Foto de perfil
-            </h2>
+      <!-- Contenido -->
+      <main class="container my-4">
+        <div id="perfilContainer">
+          <!-- FOTO -->
+          <div class="text-center mb-4">
             <img
-              class="img-fluid rounded-circle border"
-              style="max-width: 200px"
+              id="fotoPerfil"
+              class="profile-img"
               src="/assets/images/default-user.png"
-              alt="Foto de perfil del estudiante"
+              alt="Foto de perfil"
             />
-          </aside>
-          <section
-            class="col-md-8"
-            aria-labelledby="perfilTitle"
-          >
-            <h1 id="perfilTitle" class="h3 mb-3">
-              Mi perfil
-            </h1>
+          </div>
+
+          <!-- DATOS -->
+          <div id="datosPerfil">
             <dl class="row">
               <dt class="col-sm-4">Nombre:</dt>
-              <dd class="col-sm-8">
-                Nombre del estudiante
-              </dd>
+              <dd
+                class="col-sm-8"
+                id="nombreEstudiante"
+              ></dd>
+
               <dt class="col-sm-4">Usuario:</dt>
-              <dd class="col-sm-8">usuario</dd>
+              <dd
+                class="col-sm-8"
+                id="usuarioEstudiante"
+              ></dd>
+
               <dt class="col-sm-4">Cédula:</dt>
-              <dd class="col-sm-8">0000000000</dd>
+              <dd
+                class="col-sm-8"
+                id="cedulaEstudiante"
+              ></dd>
+
               <dt class="col-sm-4">
                 Fecha nacimiento:
               </dt>
-              <dd class="col-sm-8">--/--/----</dd>
+              <dd
+                class="col-sm-8"
+                id="fechaNacimientoEstudiante"
+              ></dd>
+
+              <dt class="col-sm-4">Edad:</dt>
+              <dd
+                class="col-sm-8"
+                id="edadEstudiante"
+              ></dd>
+
               <dt class="col-sm-4">Curso:</dt>
-              <dd class="col-sm-8">
-                Curso ejemplo
-              </dd>
-              <dt class="col-sm-4">Dirección:</dt>
-              <dd class="col-sm-8">
-                No especificada
-              </dd>
+              <dd
+                class="col-sm-8"
+                id="cursoEstudiante"
+              ></dd>
+
               <dt class="col-sm-4">Teléfono:</dt>
-              <dd class="col-sm-8">0990000000</dd>
-              <dt class="col-sm-4">Correo:</dt>
-              <dd class="col-sm-8">
-                ejemplo@correo.com
-              </dd>
+              <dd
+                class="col-sm-8"
+                id="telefonoEstudiante"
+              ></dd>
+
+              <dt class="col-sm-4">
+                Correo representante:
+              </dt>
+              <dd
+                class="col-sm-8"
+                id="correoRepresentanteEstudiante"
+              ></dd>
             </dl>
-            <div class="mb-3">
-              <button
-                class="btn btn-primary"
-                type="button"
-                aria-label="Editar perfil"
+            <button
+              class="btn btn-primary"
+              id="btnEditar"
+            >
+              Editar perfil
+            </button>
+          </div>
+
+          <!-- FORMULARIO EDICIÓN -->
+          <form
+            id="formEditarPerfil"
+            class="mt-4 d-none needs-validation"
+            novalidate
+          >
+            <div class="mb-3 text-center">
+              <label
+                for="inputFoto"
+                class="form-label"
+                >Foto de perfil</label
               >
-                Editar perfil
-              </button>
+              <input
+                id="inputFoto"
+                type="file"
+                class="form-control"
+              />
+              <img
+                id="previewFoto"
+                alt="fotoPerfil"
+                class="img-thumbnail mt-2"
+                style="max-width: 150px"
+              />
             </div>
-          </section>
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label
+                  for="inputNombre"
+                  class="form-label"
+                  >Nombre</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="inputNombre"
+                />
+              </div>
+              <div class="col-md-6">
+                <label
+                  for="inputUsuario"
+                  class="form-label"
+                  >Usuario</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="inputUsuario"
+                />
+              </div>
+              <div class="col-md-6">
+                <label
+                  for="inputCedula"
+                  class="form-label"
+                  >Cédula</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="inputCedula"
+                />
+              </div>
+              <div class="col-md-6">
+                <label
+                  for="inputFechaNacimiento"
+                  class="form-label"
+                  >Fecha nacimiento</label
+                >
+                <input
+                  type="date"
+                  class="form-control"
+                  id="inputFechaNacimiento"
+                />
+              </div>
+              <div class="col-md-6">
+                <label
+                  for="inputCurso"
+                  class="form-label"
+                  >Curso</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="inputCurso"
+                />
+              </div>
+              <div class="col-md-6">
+                <label
+                  for="inputTelefono"
+                  class="form-label"
+                  >Teléfono</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="inputTelefono"
+                />
+              </div>
+              <div class="col-md-12">
+                <label
+                  for="inputCorreo"
+                  class="form-label"
+                  >Correo representante</label
+                >
+                <input
+                  type="email"
+                  class="form-control"
+                  id="inputCorreo"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              class="btn btn-success mt-3"
+            >
+              Guardar cambios
+            </button>
+          </form>
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
 
-    <footer
-      role="contentinfo"
-      class="bg-white py-3 border-top text-center text-muted"
-    >
-      <small
-        >&copy; 2025 Sistema de Nutrición
-        Escolar.</small
-      >
-    </footer>
-
-    <script src="perfil.js" defer></script>
+    <script src="perfil.js"></script>
   </body>
 </html>

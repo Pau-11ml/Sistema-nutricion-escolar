@@ -41,7 +41,7 @@
   </head>
     <main
       id="maincontent"
-      class="login-container d-flex justify-content-center"
+      class="auth-container d-flex justify-content-center align-items-center min-vh-100"
       role="main"
       tabindex="-1"
     >
@@ -49,110 +49,59 @@
         id="recuperarForm"
         class="login-box bg-white p-4 rounded shadow"
         style="max-width: 400px; width: 100%"
-        aria-describedby="recuperarMessage"
       >
-        <h2 class="mb-4 text-center">
-          Recuperar contraseña
-        </h2>
-        <div
-          id="recuperarMessage"
-          class="visually-hidden"
-          aria-live="polite"
-        ></div>
+        <h2 class="mb-4 text-center">Recuperar contraseña</h2>
 
         <div class="mb-3">
-          <label for="usuario" class="form-label"
-            >Usuario</label
-          >
+          <label for="nombre" class="form-label">Nombre completo</label>
           <input
             type="text"
-            id="usuario"
+            id="nombre"
             class="form-control"
-            placeholder="Ingrese su usuario"
+            placeholder="Ingrese su nombre completo"
             required
-            aria-required="true"
-            aria-describedby="usuarioRecError"
+            aria-describedby="nombreError"
           />
-          <div
-            id="usuarioRecError"
-            class="text-danger small"
-            role="alert"
-            aria-live="assertive"
-            style="display: none"
-          >
-            Ingrese su usuario.
-          </div>
+          <div id="nombreError" class="text-danger small" style="display:none"></div>
         </div>
 
         <div class="mb-3">
-          <label for="cedula" class="form-label"
-            >Cédula</label
-          >
+          <label for="correo" class="form-label">Correo electrónico</label>
           <input
-            type="text"
-            id="cedula"
+            type="email"
+            id="correo"
             class="form-control"
-            placeholder="Ingrese su cédula"
+            placeholder="Ingrese su correo"
             required
-            aria-required="true"
-            aria-describedby="cedulaRecError"
+            aria-describedby="correoError"
           />
-          <div
-            id="cedulaRecError"
-            class="text-danger small"
-            role="alert"
-            aria-live="assertive"
-            style="display: none"
-          >
-            Ingrese su cédula.
-          </div>
+          <div id="correoError" class="text-danger small" style="display:none"></div>
         </div>
 
         <div class="mb-3">
-          <label
-            for="nuevaContrasena"
-            class="form-label"
-            >Nueva contraseña</label
-          >
+          <label for="nuevaContrasena" class="form-label">Nueva contraseña</label>
           <input
             type="password"
             id="nuevaContrasena"
             class="form-control"
             placeholder="Nueva contraseña"
             required
-            aria-required="true"
             aria-describedby="nuevaConError"
           />
-          <div
-            id="nuevaConError"
-            class="text-danger small"
-            role="alert"
-            aria-live="assertive"
-            style="display: none"
-          >
-            Ingrese una nueva contraseña.
-          </div>
+          <div id="nuevaConError" class="text-danger small" style="display:none"></div>
         </div>
 
-        <button
-          type="submit"
-          class="btn btn-primary w-100 mb-3"
-        >
+        <button type="submit" class="btn btn-primary w-100 mb-3">
           Actualizar contraseña
         </button>
 
         <div class="text-center mt-3">
-          Si la recordaste...
-          <a href="../../auth/login/login.html"
-            >Inicia sesión aquí</a
-          >
+          Si la recordaste, <a href="../../auth/login/login.html">inicia sesión aquí</a>.
         </div>
-        <p
-          id="mensaje"
-          class="text-center mt-3"
-          aria-live="polite"
-        ></p>
+
+        <p id="mensaje" class="text-center mt-3"></p>
       </form>
+
     </main>
 
     <footer

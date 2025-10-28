@@ -1,7 +1,20 @@
-// === Función para calcular edad ===
-function calcularEdad(fechaNacimiento) {
+// === INICIO ESTUDIANTE/REPRESENTANTE (versión simplificada) ===
+
+// Función para capitalizar palabras
+function capitalizar(texto) {
+  return texto
+    ? texto
+        .toLowerCase()
+        .replaceAll(/\b\w/g, (l) =>
+          l.toUpperCase()
+        )
+    : "";
+}
+
+// Calcular edad a partir de la fecha de nacimiento
+function calcularEdad(fecha) {
   const hoy = new Date();
-  const nacimiento = new Date(fechaNacimiento);
+  const nacimiento = new Date(fecha);
   let edad =
     hoy.getFullYear() - nacimiento.getFullYear();
   const mes =
@@ -15,154 +28,121 @@ function calcularEdad(fechaNacimiento) {
   return edad;
 }
 
-// === Función para obtener nombre de curso ===
-function obtenerNombreCurso(curso) {
-  const cursos = {
-    1: "Primer grado",
-    2: "Segundo grado",
-    3: "Tercer grado",
-    4: "Cuarto grado",
-    5: "Quinto grado",
-    6: "Sexto grado",
-    7: "Séptimo grado",
-  };
-  return cursos[curso] || "No especificado";
-}
 document.addEventListener(
   "DOMContentLoaded",
-  function () {
-    // Obtener usuario activo
+  () => {
+    // Obtenemos el usuario activo (el estudiante)
     const usuarioActivo = JSON.parse(
       localStorage.getItem("usuarioActivo") ||
         "{}"
     );
-    let estudianteVinculado = null;
 
-    // Si es representante, buscar estudiante vinculado
-    if (
-      usuarioActivo.usuario ??
-      usuarioActivo.usuario.includes("_rep")
-    ) {
-      const representantes = JSON.parse(
-        localStorage.getItem("representantes") ||
-          "[]"
-      );
-      const rep = representantes.find(
-        (r) => r.usuario === usuarioActivo.usuario
-      );
-      if (rep) {
-        const estudiantes = JSON.parse(
-          localStorage.getItem("estudiantes") ||
-            "[]"
-        );
-        estudianteVinculado = estudiantes.find(
-          (e) =>
-            e.usuario === rep.estudianteUsuario
-        );
-      }
-    }
-
-    const infoMostrar =
-      estudianteVinculado || usuarioActivo;
-
+    // Si no hay usuario activo, redirigir al login
     if (!usuarioActivo.usuario) {
-      globalThis.location.href =
-        "src/app/pages/usuario/login/login.html";
+      location.href =
+        "../../auth/login/login.html";
       return;
     }
 
+    // Obtenemos todos los estudiantes (si los hay)
+    const estudiantes = JSON.parse(
+      localStorage.getItem("estudiantes") || "[]"
+    );
+    const menuSemanalStore = JSON.parse(
+      localStorage.getItem("menuSemanal") || "{}"
+    );
+
+    // Buscar el estudiante por su usuario
+    // Si no está en "estudiantes", usamos directamente el usuarioActivo
+    let estudiante =
+      estudiantes.find(
+        (e) => e.usuario === usuarioActivo.usuario
+      ) || usuarioActivo;
+
+    // Elementos DOM
+    const nombreEstudiante =
+      document.getElementById("nombreEstudiante");
+    const edadEstudiante =
+      document.getElementById("edadEstudiante");
+    const cursoEstudiante =
+      document.getElementById("cursoEstudiante");
+    const institucionEstudiante =
+      document.getElementById(
+        "institucionEstudiante"
+      );
+    const menuSemanalDiv =
+      document.getElementById("menuSemanal");
+    const menuSemanalStoreDiv =
+      document.getElementById("menuSemanalStore");
     const btnCerrarSesion =
-      document.querySelector(
-        "[aria-label='Cerrar sesión']"
-      );
-    const nombreUsuarioElement =
-      document.getElementById("nombreUsuario");
-    if (nombreUsuarioElement) {
-      nombreUsuarioElement.textContent = `${usuarioActivo.nombres} ${usuarioActivo.apellidos}`;
+      document.getElementById("btnCerrarSesion");
+
+    // Mostrar información del estudiante
+    nombreEstudiante.textContent = capitalizar(
+      estudiante.nombres +
+        " " +
+        estudiante.apellidos
+    );
+    edadEstudiante.textContent =
+      calcularEdad(estudiante.fecha_nacimiento) +
+      " años";
+    cursoEstudiante.textContent =
+      estudiante.curso || "No especificado";
+    institucionEstudiante.textContent =
+      estudiante.escuela || "Unidad Educativa";
+
+    // Mostrar menú semanal (si existe)
+    const menu =
+      menuSemanalStore[estudiante.usuario];
+    if (!menu || Object.keys(menu).length === 0) {
+      menuSemanalDiv.innerHTML = `
+      <div class="alert alert-warning">
+        <i class="bi bi-exclamation-circle"></i> El nutricionista aún no ha registrado una dieta.
+      </div>`;
+    } else {
+      menuSemanalDiv.innerHTML = `<div class="row g-3"></div>`;
+      const rowDiv =
+        menuSemanalDiv.querySelector(".row");
+
+      for (const dia of Object.keys(menu)) {
+        const cardDiv =
+          document.createElement("div");
+        cardDiv.className = "col-md-6 col-lg-4";
+        cardDiv.innerHTML = `
+        <div class="card shadow-sm h-100">
+          <div class="card-header bg-success text-white text-center">
+            <strong>${capitalizar(dia)}</strong>
+          </div>
+          <div class="card-body">
+            <p><strong>Desayuno:</strong> ${
+              menu[dia].desayuno || "-"
+            }</p>
+            <p><strong>Almuerzo:</strong> ${
+              menu[dia].almuerzo || "-"
+            }</p>
+            <p><strong>Merienda:</strong> ${
+              menu[dia].merienda || "-"
+            }</p>
+            <p><strong>Cena:</strong> ${
+              menu[dia].cena || "-"
+            }</p>
+          </div>
+        </div>`;
+        rowDiv.appendChild(cardDiv);
+      }
     }
 
-    // === Mostrar información del estudiante ===
-    function mostrarInformacionNutricional() {
-      const infoContainer =
-        document.getElementById(
-          "infoNutricional"
-        );
-      if (!infoContainer) return;
-      const edad = calcularEdad(
-        infoMostrar.fecha_nacimiento
-      );
-      const curso = infoMostrar.curso;
-
-      const informacion = `
-      <div class="card mb-4">
-        <div class="card-header"><h5 class="card-title">Información Nutricional</h5></div>
-        <div class="card-body">
-          <p><strong>Nombre:</strong> ${
-            infoMostrar.nombres
-          } ${infoMostrar.apellidos}</p>
-          <p><strong>Edad:</strong> ${edad} años</p>
-          <p><strong>Curso:</strong> ${obtenerNombreCurso(
-            curso
-          )}</p>
-          <p><strong>Representante:</strong> ${
-            infoMostrar.representante ||
-            "No asignado"
-          }</p>
-        </div>
-      </div>
-    `;
-      infoContainer.innerHTML = informacion;
-    }
-
-    // === Mostrar menú semanal según nutricionista ===
-    function mostrarMenuNutricionista(
-      estudianteUsuario
+    // menuSemanalStore del nutricionista (si hay)
+    if (
+      estudiante.menuSemanalStore &&
+      estudiante.menuSemanalStore.trim() !== ""
     ) {
-      const contenedorMenu =
-        document.getElementById("menuSemanal");
-      const dietas = JSON.parse(
-        localStorage.getItem("dietas") || "{}"
-      );
-      const infoNutricional =
-        dietas[estudianteUsuario];
-
-      if (!infoNutricional) {
-        contenedorMenu.innerHTML =
-          "<p>No hay dieta registrada aún por el nutricionista.</p>";
-        return;
-      }
-
-      let html = `<div class="card">
-      <div class="card-header"><h5 class="card-title">Menú Semanal Nutricionista</h5></div>
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-bordered">
-            <thead>
-              <tr>
-                <th>Día</th>
-                <th>Desayuno</th>
-                <th>Almuerzo</th>
-                <th>Merienda</th>
-              </tr>
-            </thead>
-            <tbody>`;
-      for (const dia in infoNutricional.menuSemanal) {
-        html += `<tr>
-                 <td>${dia}</td>
-                 <td>${infoNutricional.menuSemanal[dia].desayuno}</td>
-                 <td>${infoNutricional.menuSemanal[dia].almuerzo}</td>
-                 <td>${infoNutricional.menuSemanal[dia].merienda}</td>
-               </tr>`;
-      }
-      html += `</tbody></table  >
-           </div>
-         </div>
-       </div>`;
-
-      contenedorMenu.innerHTML = html;
+      menuSemanalStoreDiv.innerHTML = `
+      <i class="bi bi-chat-left-text text-success"></i>
+      ${estudiante.menuSemanalStore}`;
     }
 
-    // === Cerrar sesión ===
+    // Botón de cerrar sesión
     btnCerrarSesion?.addEventListener(
       "click",
       () => {
@@ -171,9 +151,5 @@ document.addEventListener(
           "../../auth/login/login.html";
       }
     );
-
-    // Inicializar página
-    mostrarInformacionNutricional();
-    mostrarMenuNutricionista(infoMostrar.usuario);
   }
 );

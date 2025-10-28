@@ -129,11 +129,5 @@ document.addEventListener(
         `✅ Nutricionista registrado!\nUsuario: ${usuario}`
       );
     });
-    setTimeout(
-      () =>
-        (location.href =
-          "../../admin/admin/admin.html    "),
-      1500
-    );
   }
 );

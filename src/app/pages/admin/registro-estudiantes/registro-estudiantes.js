@@ -294,7 +294,29 @@ function generarResumen() {
   const apellidos = capitalizarPalabras(
     datos.apellidos
   );
-  const curso = capitalizarPalabras(datos.curso);
+  const cursoSelect =
+    document.getElementById("curso");
+
+  // Si ya existe un curso para el estudiante, seleccionarlo
+  cursoSelect.value = estudiante.curso || "";
+
+  // Escuchar cambios y guardar en localStorage
+  cursoSelect.addEventListener("change", () => {
+    estudiante.curso = cursoSelect.value; // Actualizar el objeto estudiante
+
+    // Actualizar la lista de estudiantes en localStorage
+    const estudiantesActualizados =
+      estudiantes.map((e) =>
+        e.usuario === estudiante.usuario
+          ? estudiante
+          : e
+      );
+    localStorage.setItem(
+      "estudiantes",
+      JSON.stringify(estudiantesActualizados)
+    );
+  });
+
   const escuela = capitalizarPalabras(
     datos.escuela
   );
@@ -374,11 +396,15 @@ function guardarRegistro() {
     estudiante.representante
   );
 
+  estudiante.rol = "estudiante";
+  estudiante.password =
+    estudiante.password ||
+    formData.get("password");
+
   const estudiantes = JSON.parse(
     localStorage.getItem("estudiantes") || "[]"
   );
 
-  // Evitar duplicados
   if (
     estudiantes.some(
       (e) =>
@@ -415,6 +441,7 @@ function guardarRegistro() {
   estudiante.usuario = nombreUsuario;
   estudiante.fecha_registro =
     new Date().toISOString();
+  estudiante.activo = true; // ✅ Estudiante activo por defecto
 
   estudiantes.push(estudiante);
   localStorage.setItem(
@@ -433,6 +460,7 @@ function guardarRegistro() {
     usuario: nombreUsuario + "_rep",
     contrasena: estudiante.password,
     rol: "representante",
+    activo: true, // ✅ Representante activo por defecto
   });
 
   localStorage.setItem(
@@ -447,7 +475,7 @@ function guardarRegistro() {
   setTimeout(
     () =>
       (location.href =
-        "../../admin/admin/admin.html    "),
+        "../../admin/admin/admin.html"),
     1500
   );
 }

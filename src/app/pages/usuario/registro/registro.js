@@ -80,6 +80,27 @@ const btnSiguiente = document.getElementById(
 const pasosTexto =
   document.querySelectorAll(".step");
 
+// === Llenar select de cursos ===
+const cursos = [
+  "1ro Básico",
+  "2do Básico",
+  "3ro Básico",
+  "4to Básico",
+  "5to Básico",
+  "6to Básico",
+];
+
+const cursoSelect =
+  document.getElementById("curso");
+cursoSelect.innerHTML =
+  '<option value="">Seleccione un curso</option>';
+cursos.forEach((c) => {
+  const opt = document.createElement("option");
+  opt.value = c;
+  opt.textContent = c;
+  cursoSelect.appendChild(opt);
+});
+
 function mostrarPaso() {
   for (const p of pasos)
     p.classList.remove("active");
@@ -285,7 +306,29 @@ function generarResumen() {
   const apellidos = capitalizarPalabras(
     datos.apellidos
   );
-  const curso = capitalizarPalabras(datos.curso);
+  const cursoSelect =
+    document.getElementById("curso");
+
+  // Si ya existe un curso para el estudiante, seleccionarlo
+  cursoSelect.value = estudiante.curso || "";
+
+  // Escuchar cambios y guardar en localStorage
+  cursoSelect.addEventListener("change", () => {
+    estudiante.curso = cursoSelect.value; // Actualizar el objeto estudiante
+
+    // Actualizar la lista de estudiantes en localStorage
+    const estudiantesActualizados =
+      estudiantes.map((e) =>
+        e.usuario === estudiante.usuario
+          ? estudiante
+          : e
+      );
+    localStorage.setItem(
+      "estudiantes",
+      JSON.stringify(estudiantesActualizados)
+    );
+  });
+
   const escuela = capitalizarPalabras(
     datos.escuela
   );
