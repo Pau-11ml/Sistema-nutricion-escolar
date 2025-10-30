@@ -1,0 +1,681 @@
+/* =========================================================
+   VARIABLES GLOBALES
+========================================================= */
+:root {
+  --primary: #0d6efd;
+  --primary-dark: #0056b3;
+  --success: #198754;
+  --secondary: #6c757d;
+  --danger: #dc3545;
+  --warning: #ffc107;
+  --info: #0dcaf0;
+  --light: #f8f9fa;
+  --dark: #212529;
+
+  --sidebar-width: 250px;
+  --sidebar-collapsed: 60px;
+  --header-height: 60px;
+}
+
+/* =========================================================
+   TEMA CLARO (por defecto)
+========================================================= */
+:root,
+body.theme-light {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --border-color: #dee2e6;
+  --nav-bg: #ffffff;
+  --nav-text: #212529;
+  --nav-hover-bg: #f8f9fa;
+  --card-bg: #ffffff;
+  --input-bg: #ffffff;
+  --input-text: #212529;
+  --dropdown-bg: #ffffff;
+  --dropdown-text: #212529;
+}
+
+/* =========================================================
+   TEMA OSCURO
+========================================================= */
+body.theme-dark {
+  --bg-primary: #212529;
+  --bg-secondary: #343a40;
+  --text-primary: #f8f9fa;
+  --text-secondary: #adb5bd;
+  --border-color: #495057;
+  --nav-bg: #343a40;
+  --nav-text: #f8f9fa;
+  --nav-hover-bg: #495057;
+  --card-bg: #343a40;
+  --input-bg: #495057;
+  --input-text: #f8f9fa;
+  --dropdown-bg: #343a40;
+  --dropdown-text: #f8f9fa;
+}
+
+/* =========================================================
+   TEMA ALTO CONTRASTE
+========================================================= */
+body.theme-highContrast {
+  --bg-primary: #ffffff;
+  --bg-secondary: #ffffff;
+  --text-primary: #000000;
+  --text-secondary: #333333;
+  --border-color: #000000;
+  --nav-bg: #ffffff;
+  --nav-text: #000000;
+  --nav-hover-bg: #e0e0e0;
+  --card-bg: #ffffff;
+  --input-bg: #ffffff;
+  --input-text: #000000;
+  --dropdown-bg: #ffffff;
+  --dropdown-text: #000000;
+}
+
+/* =========================================================
+   TEMA SEPIA
+========================================================= */
+body.theme-sepia {
+  --bg-primary: #f4ecd8;
+  --bg-secondary: #e8dcc4;
+  --text-primary: #3e2723;
+  --text-secondary: #6d4c41;
+  --border-color: #c7b299;
+  --nav-bg: #e8dcc4;
+  --nav-text: #3e2723;
+  --nav-hover-bg: #c7b299;
+  --card-bg: #f4ecd8;
+  --input-bg: #ffffff;
+  --input-text: #3e2723;
+  --dropdown-bg: #f4ecd8;
+  --dropdown-text: #3e2723;
+}
+
+/* =========================================================
+   BASE GLOBAL
+========================================================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  transition: background-color 0.3s ease,
+    color 0.3s ease, border-color 0.3s ease;
+}
+
+html,
+body {
+  font-family: -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    sans-serif;
+  color: var(--text-primary) !important;
+  background-color: var(
+    --bg-secondary
+  ) !important;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: var(--text-primary) !important;
+  background-color: var(
+    --bg-secondary
+  ) !important;
+}
+
+/* =========================================================
+   UTILIDADES
+========================================================= */
+.min-vh-100 {
+  min-height: 100vh;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* =========================================================
+   BOTONES PERSONALIZADOS
+========================================================= */
+.btn-primary {
+  background: linear-gradient(
+    135deg,
+    var(--primary),
+    var(--primary-dark)
+  );
+  border: none;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(13, 110, 253, 0.4);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-success {
+  background: linear-gradient(
+    135deg,
+    #198754,
+    #146c43
+  );
+  border: none;
+  box-shadow: 0 4px 15px rgba(25, 135, 84, 0.3);
+}
+
+.btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(25, 135, 84, 0.4);
+}
+
+/* =========================================================
+   CARDS PERSONALIZADAS
+========================================================= */
+.card {
+  border: 1px solid var(--border-color) !important;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+.card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.card-header {
+  background-color: var(
+    --bg-secondary
+  ) !important;
+  color: var(--text-primary) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  border-radius: 1rem 1rem 0 0 !important;
+  font-weight: 600;
+  padding: 1rem 1.5rem;
+}
+
+.card-body {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+/* =========================================================
+   FORMULARIOS
+========================================================= */
+.form-control,
+.form-select,
+.input-group-text {
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+  border-color: var(--border-color) !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 0.2rem
+    rgba(13, 110, 253, 0.25) !important;
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+}
+
+.form-label {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary) !important;
+}
+
+.invalid-feedback {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: var(--danger);
+}
+
+.form-text {
+  color: var(--text-secondary) !important;
+}
+
+/* =========================================================
+   TABLAS
+========================================================= */
+.table {
+  border-radius: 0.5rem;
+  overflow: hidden;
+  color: var(--text-primary) !important;
+  background-color: var(--card-bg) !important;
+}
+
+.table thead th {
+  background-color: var(
+    --bg-secondary
+  ) !important;
+  color: var(--text-primary) !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--primary);
+  border-color: var(--border-color) !important;
+}
+
+.table tbody td {
+  color: var(--text-primary) !important;
+  background-color: var(--card-bg) !important;
+  border-color: var(--border-color) !important;
+}
+
+.table-hover tbody tr:hover {
+  background-color: var(
+    --nav-hover-bg
+  ) !important;
+  cursor: pointer;
+}
+
+.table-hover tbody tr:hover td {
+  background-color: var(
+    --nav-hover-bg
+  ) !important;
+}
+
+/* =========================================================
+   BADGES Y PILLS
+========================================================= */
+.badge {
+  padding: 0.5em 0.75em;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+/* =========================================================
+   TEXTOS Y UTILIDADES
+========================================================= */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--text-primary) !important;
+}
+
+p,
+span,
+div,
+label,
+a {
+  color: var(--text-primary) !important;
+}
+
+.text-muted {
+  color: var(--text-secondary) !important;
+}
+
+small {
+  color: var(--text-secondary) !important;
+}
+
+/* =========================================================
+   BOTONES ADICIONALES
+========================================================= */
+.btn {
+  transition: all 0.3s ease;
+}
+
+.btn-secondary,
+.btn-outline-secondary {
+  background-color: var(
+    --bg-secondary
+  ) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+.btn-secondary:hover,
+.btn-outline-secondary:hover {
+  background-color: var(
+    --nav-hover-bg
+  ) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+.btn-outline-primary {
+  color: var(--primary) !important;
+  border-color: var(--primary) !important;
+  background-color: transparent !important;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary) !important;
+  color: #ffffff !important;
+}
+
+.btn-outline-danger {
+  color: var(--danger) !important;
+  border-color: var(--danger) !important;
+  background-color: transparent !important;
+}
+
+.btn-outline-danger:hover {
+  background-color: var(--danger) !important;
+  color: #ffffff !important;
+}
+
+/* =========================================================
+   DROPDOWN
+========================================================= */
+.dropdown-menu {
+  background-color: var(--dropdown-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--dropdown-text) !important;
+}
+
+.dropdown-item {
+  color: var(--dropdown-text) !important;
+}
+
+.dropdown-item:hover {
+  background-color: var(
+    --nav-hover-bg
+  ) !important;
+  color: var(--text-primary) !important;
+}
+
+.dropdown-item.active {
+  background-color: var(--primary) !important;
+  color: #ffffff !important;
+}
+
+/* =========================================================
+   ANIMACIONES GLOBALES
+========================================================= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* =========================================================
+   SCROLLBAR PERSONALIZADO
+========================================================= */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--text-secondary);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-primary);
+}
+
+/* =========================================================
+   ACCESIBILIDAD
+========================================================= */
+/* Estilos de alto contraste */
+.high-contrast {
+  filter: contrast(1.5) !important;
+}
+
+.high-contrast .card {
+  border: 2px solid var(--dark);
+}
+
+/* Focus visible mejorado */
+*:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Saltar al contenido principal */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--primary);
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  z-index: 10001;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+@media (max-width: 768px) {
+  .card {
+    border-radius: 0.75rem;
+  }
+
+  .btn {
+    padding: 0.5rem 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  :root {
+    font-size: 14px;
+  }
+
+  .card {
+    border-radius: 0.5rem;
+  }
+}
+
+/* =========================================================
+   UTILIDADES DE IMPRESIÓN
+========================================================= */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+}
+
+/* =========================================================
+   CONTENEDORES Y LAYOUT
+========================================================= */
+.container-fluid {
+  background-color: var(
+    --bg-secondary
+  ) !important;
+  color: var(--text-primary) !important;
+}
+
+.main-content {
+  background-color: var(
+    --bg-secondary
+  ) !important;
+  color: var(--text-primary) !important;
+}
+
+/* =========================================================
+   ELEMENTOS ESPECÍFICOS DEL DASHBOARD
+========================================================= */
+.dashboard-view,
+.perfil-view,
+.admin-layout,
+.user-layout,
+.nutricionista-layout {
+  background-color: var(
+    --bg-secondary
+  ) !important;
+  color: var(--text-primary) !important;
+}
+
+.stat-card {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+.stat-card .card-body {
+  background-color: var(--card-bg) !important;
+}
+
+.stat-icon {
+  opacity: 0.7;
+}
+
+.search-box input {
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* Elementos de perfil */
+.avatar-wrapper,
+.student-card,
+.stat-box {
+  background-color: var(
+    --bg-secondary
+  ) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* Modal */
+.modal-content {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+.modal-header,
+.modal-footer {
+  background-color: var(
+    --bg-secondary
+  ) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+.modal-body {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+.modal-title {
+  color: var(--text-primary) !important;
+}
+
+/* Botón cerrar en modo oscuro */
+body.theme-dark .btn-close,
+body.theme-highContrast .btn-close,
+body.theme-sepia .btn-close {
+  filter: invert(1) grayscale(100%)
+    brightness(200%);
+}
+
+/* Alertas y notificaciones */
+.alert {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* List group */
+.list-group-item {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+.list-group-item:hover {
+  background-color: var(
+    --nav-hover-bg
+  ) !important;
+}
+
+/* =========================================================
+   TRANSICIONES DE PÁGINA
+========================================================= */
+.page-enter-active,
+.page-leave-active {
+  transition: all 0.3s ease;
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateX(20px);
+}

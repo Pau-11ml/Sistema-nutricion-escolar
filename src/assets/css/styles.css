@@ -9,6 +9,85 @@
   --danger: #dc3545;
   --light: #f8f9fa;
   --dark: #212529;
+  --header-height: 60px;
+  --sidebar-width: 250px;
+}
+
+/* =========================================================
+   TEMA CLARO (por defecto)
+========================================================= */
+:root,
+body.theme-light {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --border-color: #dee2e6;
+  --nav-bg: #ffffff;
+  --nav-text: #212529;
+  --nav-hover-bg: #f8f9fa;
+  --card-bg: #ffffff;
+  --input-bg: #ffffff;
+  --input-text: #212529;
+  --dropdown-bg: #ffffff;
+  --dropdown-text: #212529;
+}
+
+/* =========================================================
+   TEMA OSCURO
+========================================================= */
+body.theme-dark {
+  --bg-primary: #212529;
+  --bg-secondary: #343a40;
+  --text-primary: #f8f9fa;
+  --text-secondary: #adb5bd;
+  --border-color: #495057;
+  --nav-bg: #343a40;
+  --nav-text: #f8f9fa;
+  --nav-hover-bg: #495057;
+  --card-bg: #343a40;
+  --input-bg: #495057;
+  --input-text: #f8f9fa;
+  --dropdown-bg: #343a40;
+  --dropdown-text: #f8f9fa;
+}
+
+/* =========================================================
+   TEMA ALTO CONTRASTE
+========================================================= */
+body.theme-highContrast {
+  --bg-primary: #ffffff;
+  --bg-secondary: #ffffff;
+  --text-primary: #000000;
+  --text-secondary: #333333;
+  --border-color: #000000;
+  --nav-bg: #ffffff;
+  --nav-text: #000000;
+  --nav-hover-bg: #e0e0e0;
+  --card-bg: #ffffff;
+  --input-bg: #ffffff;
+  --input-text: #000000;
+  --dropdown-bg: #ffffff;
+  --dropdown-text: #000000;
+}
+
+/* =========================================================
+   TEMA SEPIA
+========================================================= */
+body.theme-sepia {
+  --bg-primary: #f4ecd8;
+  --bg-secondary: #e8dcc4;
+  --text-primary: #3e2723;
+  --text-secondary: #6d4c41;
+  --border-color: #c7b299;
+  --nav-bg: #e8dcc4;
+  --nav-text: #3e2723;
+  --nav-hover-bg: #c7b299;
+  --card-bg: #f4ecd8;
+  --input-bg: #ffffff;
+  --input-text: #3e2723;
+  --dropdown-bg: #f4ecd8;
+  --dropdown-text: #3e2723;
 }
 
 /* =========================================================
@@ -18,15 +97,41 @@ html,
 body {
   font-family: "Segoe UI", Roboto,
     "Helvetica Neue", sans-serif;
-  color: var(--dark);
-  background-color: var(--light);
+  color: var(--text-primary);
+  background-color: var(--bg-secondary);
   margin: 0;
   padding: 0;
+  transition: background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+* {
+  transition: background-color 0.3s ease,
+    color 0.3s ease, border-color 0.3s ease;
 }
 
 /* =========================================================
    COMPONENTES GENERALES
 ========================================================= */
+.card {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+.card-header {
+  background-color: var(
+    --bg-secondary
+  ) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+.card-body {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+}
+
 .btn-primary {
   background: linear-gradient(
     135deg,
@@ -38,10 +143,63 @@ body {
   text-transform: uppercase;
   transition: all 0.2s ease;
   box-shadow: 0 4px 15px rgba(13, 110, 253, 0.4);
+  color: #ffffff !important;
 }
 .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(13, 110, 253, 0.5);
+}
+
+.btn-secondary,
+.btn-outline-secondary {
+  color: var(--text-primary) !important;
+  background-color: var(
+    --bg-secondary
+  ) !important;
+  border-color: var(--border-color) !important;
+}
+
+.btn-secondary:hover,
+.btn-outline-secondary:hover {
+  background-color: var(
+    --nav-hover-bg
+  ) !important;
+}
+
+.form-control,
+.input-group-text {
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+  border-color: var(--border-color) !important;
+}
+
+.form-control:focus {
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+}
+
+.table {
+  color: var(--text-primary) !important;
+  background-color: var(--card-bg) !important;
+}
+
+.table thead th {
+  color: var(--text-primary) !important;
+  background-color: var(
+    --bg-secondary
+  ) !important;
+  border-color: var(--border-color) !important;
+}
+
+.table tbody td {
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+.table-hover tbody tr:hover {
+  background-color: var(
+    --nav-hover-bg
+  ) !important;
 }
 
 /* Topbar y Footer */
@@ -53,7 +211,8 @@ body {
 .footer {
   text-align: center;
   padding: 1rem;
-  color: #6c757d;
+  color: var(--text-secondary);
+  background-color: var(--card-bg);
   font-size: 0.9rem;
 }
 
