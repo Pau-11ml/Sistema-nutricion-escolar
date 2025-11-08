@@ -15,7 +15,7 @@
                   ></i>
                 </div>
                 <h2 class="fw-bold">
-                  {{ $t("auth.register") }}
+                  {{ $t("Registrate") }}
                 </h2>
                 <p class="text-muted">
                   {{ $t("auth.createAccount") }}
@@ -35,7 +35,7 @@
                     <i
                       class="bi bi-person-badge me-2"
                     ></i>
-                    {{ $t("auth.selectRole") }}
+                    {{ $t("Selecciona tu Rol") }}
                   </div>
                   <div class="row g-3">
                     <div
@@ -102,7 +102,7 @@
                       }"
                       :placeholder="
                         $t(
-                          'auth.firstNamePlaceholder'
+                          'Ej: Santiago José'
                         )
                       "
                       required
@@ -136,7 +136,7 @@
                       }"
                       :placeholder="
                         $t(
-                          'auth.lastNamePlaceholder'
+                          'Ej: Santana Pacheco'
                         )
                       "
                       required
@@ -235,7 +235,7 @@
                       'is-invalid': errors.email,
                     }"
                     :placeholder="
-                      $t('auth.emailPlaceholder')
+                      $t('Ej: jose_pacheco@gmail.com')
                     "
                     required
                   />
@@ -270,7 +270,7 @@
                       }"
                       :placeholder="
                         $t(
-                          'auth.usernamePlaceholder'
+                          'PachecoJ'
                         )
                       "
                       required
@@ -311,7 +311,7 @@
                         }"
                         :placeholder="
                           $t(
-                            'auth.passwordPlaceholder'
+                            'Ingrese contraseña'
                           )
                         "
                         required
@@ -358,7 +358,7 @@
                     class="form-label"
                   >
                     {{
-                      $t("auth.confirmPassword")
+                      $t("Confirmar contraseña")
                     }}
                     <span class="text-danger"
                       >*</span
@@ -381,7 +381,7 @@
                     }"
                     :placeholder="
                       $t(
-                        'auth.confirmPasswordPlaceholder'
+                        'Confirme contraseña'
                       )
                     "
                     required
@@ -413,20 +413,20 @@
                       class="form-check-label"
                       for="acceptTerms"
                     >
-                      {{ $t("auth.acceptTerms") }}
+                      {{ $t("Aceptar nuestros") }}
                       <router-link
                         to="/terminos"
                         target="_blank"
                       >
-                        {{ $t("auth.termsLink") }}
+                        {{ $t("Terminos y condiciones") }}
                       </router-link>
-                      {{ $t("common.and") }}
+                      {{ $t("y nuestra") }}
                       <router-link
                         to="/politica-privacidad"
                         target="_blank"
                       >
                         {{
-                          $t("auth.privacyLink")
+                          $t("Politica de privacidad")
                         }}
                       </router-link>
                     </label>
@@ -481,7 +481,7 @@
                     <i
                       class="bi bi-arrow-left me-2"
                     ></i>
-                    {{ $t("auth.backToLogin") }}
+                    {{ $t("Regresar al Inicio") }}
                   </router-link>
                 </div>
               </form>
@@ -495,7 +495,7 @@
 
 <script setup>
 import { ref, reactive } from "vue";
-import { useRouter } from "vue-router";
+import { stringifyQuery, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { useNotificationStore } from "@/stores/notification";
 import { useI18n } from "vue-i18n";
@@ -510,19 +510,19 @@ const roles = [
   {
     value: "representante",
     label: "auth.roleParent",
-    description: "auth.roleParentDesc",
+    description: "Rol de representante estudiantil",
     icon: "bi bi-person-fill",
   },
   {
     value: "nutricionista",
-    label: "auth.roleNutritionist",
-    description: "auth.roleNutritionistDesc",
+    label: "Nutricionista",
+    description: "Rol de nutricionista escolar",
     icon: "bi bi-clipboard2-pulse-fill",
   },
   {
     value: "admin",
-    label: "auth.roleAdmin",
-    description: "auth.roleAdminDesc",
+    label: "Administrador",
+    description: "Rol de administrador",
     icon: "bi bi-shield-fill-check",
   },
 ];
@@ -549,19 +549,19 @@ const showPassword = ref(false);
 // Validaciones
 function validateRole() {
   if (!formData.role) {
-    errors.value.role = t("validation.roleRequired");
+    errors.value.role = t("Se requiere seleccionar un rol");
   }
 }
 
 function validatePersonalInfo() {
   if (!formData.nombres.trim()) {
-    errors.value.nombres = t("validation.firstNameRequired");
+    errors.value.nombres = t("Se requiere nombres");
   } else if (formData.nombres.length < 2) {
     errors.value.nombres = t("validation.firstNameMin");
   }
 
   if (!formData.apellidos.trim()) {
-    errors.value.apellidos = t("validation.lastNameRequired");
+    errors.value.apellidos = t("Se requiere apellidos");
   } else if (formData.apellidos.length < 2) {
     errors.value.apellidos = t("validation.lastNameMin");
   }
@@ -569,7 +569,7 @@ function validatePersonalInfo() {
 
 function validateIdentification() {
   if (!formData.cedula) {
-    errors.value.cedula = t("validation.idRequired");
+    errors.value.cedula = t("Se requiere cédula");
   } else if (!/^\d{10}$/.test(formData.cedula)) {
     errors.value.cedula = t("validation.idInvalid");
   }
@@ -577,13 +577,13 @@ function validateIdentification() {
 
 function validateContact() {
   if (!formData.telefono) {
-    errors.value.telefono = t("validation.phoneRequired");
+    errors.value.telefono = t("Se requiere telefóno");
   } else if (!/^\d{9,10}$/.test(formData.telefono)) {
     errors.value.telefono = t("validation.phoneInvalid");
   }
 
   if (!formData.email) {
-    errors.value.email = t("validation.emailRequired");
+    errors.value.email = t("Se requiere correo");
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
     errors.value.email = t("validation.emailInvalid");
   }
@@ -591,13 +591,13 @@ function validateContact() {
 
 function validateCredentials() {
   if (!formData.username) {
-    errors.value.username = t("validation.usernameRequired");
+    errors.value.username = t("Se requiere nombre de usuario");
   } else if (formData.username.length < 4) {
     errors.value.username = t("validation.usernameMin");
   }
 
   if (!formData.password) {
-    errors.value.password = t("validation.passwordRequired");
+    errors.value.password = t("Se requiere contraseña");
   } else if (formData.password.length < 8) {
     errors.value.password = t("validation.passwordMin");
   } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
@@ -605,7 +605,7 @@ function validateCredentials() {
   }
 
   if (!formData.confirmPassword) {
-    errors.value.confirmPassword = t("validation.confirmPasswordRequired");
+    errors.value.confirmPassword = t("Se requiere confirmar contraseña");
   } else if (formData.password !== formData.confirmPassword) {
     errors.value.confirmPassword = t("validation.passwordMismatch");
   }
@@ -613,7 +613,7 @@ function validateCredentials() {
 
 function validateTerms() {
   if (!formData.acceptTerms) {
-    errors.value.acceptTerms = t("validation.termsRequired");
+    errors.value.acceptTerms = t("Se requiere aceptar los terminos, condiciones y politicas de privacidad");
   }
 }
 
@@ -636,7 +636,7 @@ async function handleRegister() {
 
   if (!validateForm()) {
     notificationStore.error(
-      t("validation.formErrors")
+      t("Error al crear cuenta")
     );
     return;
   }
@@ -657,9 +657,12 @@ async function handleRegister() {
       cedula: formData.cedula,
       telefono: formData.telefono,
       role: formData.role,
+      password: formData.password
     };
 
     await authStore.register(userData);
+
+    localStorage.setItem("user", JSON.stringify(userData))
 
     notificationStore.success(
       t("auth.registerSuccess")
@@ -684,6 +687,16 @@ async function handleRegister() {
   } finally {
     isLoading.value = false;
   }
+
+  onMounted(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      authStore.user = user; // Si tienes una variable 'user' en tu Pinia store
+      console.log("Usuario recuperado del localStorage:", user);
+    }
+  });
+
 }
 </script>
 

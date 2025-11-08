@@ -127,29 +127,52 @@ export const useAuthStore = defineStore('auth', () => {
 
 // Funciones mock - reemplazar con API real
 async function mockLogin(credentials) {
-  await new Promise(resolve => setTimeout(resolve, 800))
-  
-  // Usuarios de prueba
-  const users = {
-    'admin': { username: 'admin', password: 'admin123', role: 'admin', name: 'Administrador' },
-    'representante': { username: 'representante', password: 'rep123', role: 'representante', name: 'Juan Pérez' },
-    'nutricionista': { username: 'nutricionista', password: 'nutri123', role: 'nutricionista', name: 'María García' }
+  await new Promise(resolve => setTimeout(resolve, 800));
+
+  // Intentar recuperar usuario registrado
+  const storedUser = JSON.parse(localStorage.getItem('user'));
+  if (storedUser) {
+    const isUsernameOrEmailMatch =
+      storedUser.username === credentials.username ||
+      storedUser.email === credentials.username;
+    
+    const isPasswordMatch = storedUser.password === credentials.password;
+
+    if (isUsernameOrEmailMatch && isPasswordMatch) {
+      return {
+        token: 'mock-token-' + Date.now(),
+        user: {
+          id: Date.now(),
+          username: storedUser.username,
+          email: storedUser.email,
+          role: storedUser.role,
+          name: `${storedUser.nombres} ${storedUser.apellidos}`
+        }
+      };
+    }
   }
-  
-  const user = users[credentials.username]
+
+  // Usuarios de prueba (fallback)
+  const users = {
+    admin: { username: 'admin', password: 'admin123', role: 'admin', name: 'Administrador' },
+    representante: { username: 'representante', password: 'rep123', role: 'representante', name: 'Juan Pérez' },
+    nutricionista: { username: 'nutricionista', password: 'nutri123', role: 'nutricionista', name: 'María García' }
+  };
+
+  const user = users[credentials.username];
   if (user && user.password === credentials.password) {
     return {
       token: 'mock-token-' + Date.now(),
-      user: { 
+      user: {
         id: Date.now(),
-        username: user.username, 
-        role: user.role, 
-        name: user.name 
+        username: user.username,
+        role: user.role,
+        name: user.name
       }
-    }
+    };
   }
-  
-  throw new Error('Credenciales inválidas')
+
+  throw new Error('Credenciales inválidas');
 }
 
 async function mockRegister(userData) {
