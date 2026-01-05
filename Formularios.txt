@@ -1,6 +1,6 @@
 
-Facultad Ciencias de la Vida y TecnologÌas
-Carrera IngenierÌa de Software 
+Facultad Ciencias de la Vida y Tecnolog√≠as
+Carrera Ingenier√≠a de Software 
 Quinto Nivel - B
    
 Tema:
@@ -23,13 +23,44 @@ Diciembre - 2025
 
 
 1. Formularios de representante
-FormularioDescripciÛn del formulario Formulario de Consulta de Comidas del DÌaEl usuario presiona ìVerî para observar el desayuno, almuerzo y merienda. Filtrar alguna cosa, que se vea como formulario.Formulario de Recomendaciones NutricionalesEl estudiante observa los consejos personalizados enviados por el nutricionista. Formulario de RetroalimentaciÛn de ComidasPermite que el estudiante evaluÈ platos, reporte problemas o sugiera mejoras. Formulario de Historial NutricionalMuestra un resumen de las comidas consumidas y recomendaciones pasadas.  
+Formulario
+Descripci√≥n del formulario 
+Formulario de Consulta de Comidas del D√≠a
+El usuario presiona ‚ÄúVer‚Äù para observar el desayuno, almuerzo y merienda. Filtrar alguna cosa, que se vea como formulario.
+Formulario de Recomendaciones Nutricionales
+El estudiante observa los consejos personalizados enviados por el nutricionista. 
+Formulario de Retroalimentaci√≥n de Comidas
+Permite que el estudiante evalu√© platos, reporte problemas o sugiera mejoras. 
+Formulario de Historial Nutricional
+Muestra un resumen de las comidas consumidas y recomendaciones pasadas. 
+ 
 2. Formularios de nutricionista 
-FormularioDescripciÛn del formularioFormulario de GestiÛn de Men˙Permite crear, editar o eliminar comidas del men˙. Debe tener un campo para ingredientes y sus valores nutricionalesFormulario de Recomendaciones PersonalizadasEl nutricionista puede redactar consejos seg˙n el perfil de cada estudiante. Formulario de EvaluaciÛn del Estado NutricionalAnaliza datos de estudiantes (peso, alergias, h·bitos) para ajustar men˙s.Formulario de Alertas/NotificacionesEnvÌa avisos a los estudiantes (cambios de men˙, alertas de alergias, recordatorios, etc.). 
+Formulario
+Descripci√≥n del formulario
+Formulario de Gesti√≥n de Men√∫
+Permite crear, editar o eliminar comidas del men√∫. Debe tener un campo para ingredientes y sus valores nutricionales
+Formulario de Recomendaciones Personalizadas
+El nutricionista puede redactar consejos seg√∫n el perfil de cada estudiante. 
+Formulario de Evaluaci√≥n del Estado Nutricional
+Analiza datos de estudiantes (peso, alergias, h√°bitos) para ajustar men√∫s.
+Formulario de Alertas/Notificaciones
+Env√≠a avisos a los estudiantes (cambios de men√∫, alertas de alergias, recordatorios, etc.). 
+
 3. Formularios de administrador 
 
-FormularioDescripciÛn del formulario Formulario de GestiÛn de UsuariosGestiona cuentas y roles (estudiante, nutricionista). Formulario de Registro Permite crear nuevas cuentas de estudiantes y nutricionistas. Formulario de ConfiguraciÛn General del SistemaAjusta algunos par·metros del sistema Formulario de Reportes GlobalesGenera informes sobre los datos de los usuarios.
+Formulario
+Descripci√≥n del formulario 
+Formulario de Gesti√≥n de Usuarios
+Gestiona cuentas y roles (estudiante, nutricionista). 
+Formulario de Registro 
+Permite crear nuevas cuentas de estudiantes y nutricionistas. 
+Formulario de Configuraci√≥n General del Sistema
+Ajusta algunos par√°metros del sistema 
+Formulario de Reportes Globales
+Genera informes sobre los datos de los usuarios.
+
 
 
             
+
 
