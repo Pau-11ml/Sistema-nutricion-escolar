@@ -1,9 +1,7 @@
 <template>
   <div class="estudiantes-view">
     <!-- Encabezado -->
-    <div
-      class="d-flex justify-content-between align-items-center mb-4"
-    >
+    <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
         <h1 class="h3 mb-1">
           <i class="bi bi-people-fill me-2"></i>
@@ -13,14 +11,9 @@
           {{ $t("admin.estudiantes.subtitulo") }}
         </p>
       </div>
-      <button
-        class="btn btn-primary"
-        @click="goToRegistro"
-      >
+      <button class="btn btn-primary" @click="goToRegistro">
         <i class="bi bi-plus-circle me-2"></i>
-        {{
-          $t("admin.estudiantes.nuevoEstudiante")
-        }}
+        {{ $t("admin.estudiantes.nuevoEstudiante") }}
       </button>
     </div>
 
@@ -32,12 +25,8 @@
             <i class="bi bi-people"></i>
           </div>
           <div class="stat-content">
-            <div class="stat-value">
-              {{ totalEstudiantes }}
-            </div>
-            <div class="stat-label">
-              Total Estudiantes
-            </div>
+            <div class="stat-value">{{ totalEstudiantes }}</div>
+            <div class="stat-label">Total Estudiantes</div>
           </div>
         </div>
       </div>
@@ -47,9 +36,7 @@
             <i class="bi bi-check-circle"></i>
           </div>
           <div class="stat-content">
-            <div class="stat-value">
-              {{ estudiantesActivos }}
-            </div>
+            <div class="stat-value">{{ estudiantesActivos }}</div>
             <div class="stat-label">Activos</div>
           </div>
         </div>
@@ -57,17 +44,11 @@
       <div class="col-md-3">
         <div class="stat-card">
           <div class="stat-icon bg-warning">
-            <i
-              class="bi bi-exclamation-triangle"
-            ></i>
+            <i class="bi bi-exclamation-triangle"></i>
           </div>
           <div class="stat-content">
-            <div class="stat-value">
-              {{ estudiantesAlergias }}
-            </div>
-            <div class="stat-label">
-              Con Alergias
-            </div>
+            <div class="stat-value">{{ estudiantesAlergias }}</div>
+            <div class="stat-label">Con Alergias</div>
           </div>
         </div>
       </div>
@@ -77,9 +58,7 @@
             <i class="bi bi-mortarboard"></i>
           </div>
           <div class="stat-content">
-            <div class="stat-value">
-              {{ totalGrados }}
-            </div>
+            <div class="stat-value">{{ totalGrados }}</div>
             <div class="stat-label">Grados</div>
           </div>
         </div>
@@ -91,10 +70,7 @@
       <div class="card-body">
         <div class="row g-3">
           <div class="col-md-4">
-            <label
-              for="buscarEstudiante"
-              class="form-label"
-            >
+            <label for="buscarEstudiante" class="form-label">
               <i class="bi bi-search me-1"></i>
               Buscar
             </label>
@@ -103,91 +79,43 @@
               v-model="searchTerm"
               type="text"
               class="form-control"
-              :placeholder="
-                $t(
-                  'admin.estudiantes.buscarPlaceholder'
-                )
-              "
+              :placeholder="$t('admin.estudiantes.buscarPlaceholder')"
             />
           </div>
           <div class="col-md-2">
-            <label
-              for="filtroGrado"
-              class="form-label"
-            >
+            <label for="filtroGrado" class="form-label">
               <i class="bi bi-funnel me-1"></i>
               Grado
             </label>
-            <select
-              id="filtroGrado"
-              v-model="filtroGrado"
-              class="form-select"
-            >
+            <select id="filtroGrado" v-model="filtroGrado" class="form-select">
               <option value="">Todos</option>
-              <option
-                v-for="grado in grados"
-                :key="grado"
-                :value="grado"
-              >
+              <option v-for="grado in grados" :key="grado" :value="grado">
                 {{ grado }}
               </option>
             </select>
           </div>
           <div class="col-md-2">
-            <label
-              for="filtroParalelo"
-              class="form-label"
-            >
-              Paralelo
-            </label>
-            <select
-              id="filtroParalelo"
-              v-model="filtroParalelo"
-              class="form-select"
-            >
+            <label for="filtroParalelo" class="form-label">Paralelo</label>
+            <select id="filtroParalelo" v-model="filtroParalelo" class="form-select">
               <option value="">Todos</option>
-              <option
-                v-for="paralelo in paralelos"
-                :key="paralelo"
-                :value="paralelo"
-              >
+              <option v-for="paralelo in paralelos" :key="paralelo" :value="paralelo">
                 {{ paralelo }}
               </option>
             </select>
           </div>
           <div class="col-md-2">
-            <label
-              for="filtroEstado"
-              class="form-label"
-            >
-              Estado
-            </label>
-            <select
-              id="filtroEstado"
-              v-model="filtroEstado"
-              class="form-select"
-            >
+            <label for="filtroEstado" class="form-label">Estado</label>
+            <select id="filtroEstado" v-model="filtroEstado" class="form-select">
               <option value="">Todos</option>
-              <option value="activo">
-                Activo
-              </option>
-              <option value="inactivo">
-                Inactivo
-              </option>
+              <option value="activo">Activo</option>
+              <option value="inactivo">Inactivo</option>
             </select>
           </div>
           <div class="col-md-2">
             <div class="d-flex flex-column">
-              <span class="form-label d-block"
-                >&nbsp;</span
-              >
-              <button
-                class="btn btn-outline-secondary w-100"
-                @click="limpiarFiltros"
-              >
-                <i
-                  class="bi bi-x-circle me-1"
-                ></i>
+              <span class="form-label d-block">&nbsp;</span>
+              <button class="btn btn-outline-secondary w-100" @click="limpiarFiltros">
+                <i class="bi bi-x-circle me-1"></i>
                 Limpiar
               </button>
             </div>
@@ -199,38 +127,24 @@
     <!-- Tabla de estudiantes -->
     <div class="card">
       <div class="card-body">
-        <div
-          class="d-flex justify-content-between align-items-center mb-3"
-        >
+        <div class="d-flex justify-content-between align-items-center mb-3">
           <div class="d-flex gap-2">
-            <button
-              class="btn btn-sm btn-outline-primary"
-              @click="exportarCSV"
-            >
+            <button class="btn btn-sm btn-outline-primary" @click="exportarCSV">
               <i class="bi bi-download me-1"></i>
               Exportar CSV
             </button>
-            <button
-              class="btn btn-sm btn-outline-success"
-              @click="exportarExcel"
-            >
-              <i
-                class="bi bi-file-earmark-excel me-1"
-              ></i>
+            <button class="btn btn-sm btn-outline-success" @click="exportarExcel">
+              <i class="bi bi-file-earmark-excel me-1"></i>
               Exportar Excel
             </button>
           </div>
           <div class="text-muted">
-            Mostrando
-            {{ estudiantesFiltrados.length }} de
-            {{ estudiantes.length }} estudiantes
+            Mostrando {{ estudiantesFiltrados.length }} de {{ estudiantes.length }} estudiantes
           </div>
         </div>
 
         <div class="table-responsive">
-          <table
-            class="table table-hover align-middle"
-          >
+          <table class="table table-hover align-middle">
             <thead>
               <tr>
                 <th>
@@ -238,61 +152,32 @@
                     v-model="seleccionarTodos"
                     type="checkbox"
                     class="form-check-input"
-                    @change="
-                      toggleSeleccionarTodos
-                    "
+                    @change="toggleSeleccionarTodos"
                   />
                 </th>
                 <th>Foto</th>
-                <th
-                  class="sortable"
-                  @click="ordenarPor('nombres')"
-                >
+                <th class="sortable" @click="ordenarPor('nombres')">
                   Nombres
                   <i
-                    v-if="
-                      ordenColumna === 'nombres'
-                    "
-                    :class="
-                      ordenDireccion === 'asc'
-                        ? 'bi-sort-up'
-                        : 'bi-sort-down'
-                    "
+                    v-if="ordenColumna === 'nombres'"
+                    :class="ordenDireccion === 'asc' ? 'bi-sort-up' : 'bi-sort-down'"
                     class="bi ms-1"
                   ></i>
                 </th>
-                <th
-                  class="sortable"
-                  @click="ordenarPor('apellidos')"
-                >
+                <th class="sortable" @click="ordenarPor('apellidos')">
                   Apellidos
                   <i
-                    v-if="
-                      ordenColumna === 'apellidos'
-                    "
-                    :class="
-                      ordenDireccion === 'asc'
-                        ? 'bi-sort-up'
-                        : 'bi-sort-down'
-                    "
+                    v-if="ordenColumna === 'apellidos'"
+                    :class="ordenDireccion === 'asc' ? 'bi-sort-up' : 'bi-sort-down'"
                     class="bi ms-1"
                   ></i>
                 </th>
                 <th>Cédula</th>
-                <th
-                  class="sortable"
-                  @click="ordenarPor('grado')"
-                >
+                <th class="sortable" @click="ordenarPor('grado')">
                   Grado
                   <i
-                    v-if="
-                      ordenColumna === 'grado'
-                    "
-                    :class="
-                      ordenDireccion === 'asc'
-                        ? 'bi-sort-up'
-                        : 'bi-sort-down'
-                    "
+                    v-if="ordenColumna === 'grado'"
+                    :class="ordenDireccion === 'asc' ? 'bi-sort-up' : 'bi-sort-down'"
                     class="bi ms-1"
                   ></i>
                 </th>
@@ -303,15 +188,10 @@
               </tr>
             </thead>
             <tbody>
-              <tr
-                v-for="estudiante in estudiantesPaginados"
-                :key="estudiante.id"
-              >
+              <tr v-for="estudiante in estudiantesPaginados" :key="estudiante.id">
                 <td>
                   <input
-                    v-model="
-                      estudiantesSeleccionados
-                    "
+                    v-model="estudiantesSeleccionados"
                     type="checkbox"
                     class="form-check-input"
                     :value="estudiante.id"
@@ -325,107 +205,49 @@
                       :alt="estudiante.nombres"
                       class="rounded-circle"
                     />
-                    <div
-                      v-else
-                      class="avatar-placeholder"
-                    >
-                      {{
-                        getIniciales(
-                          estudiante.nombres,
-                          estudiante.apellidos
-                        )
-                      }}
+                    <div v-else class="avatar-placeholder">
+                      {{ getIniciales(estudiante.nombres, estudiante.apellidos) }}
                     </div>
                   </div>
                 </td>
                 <td>{{ estudiante.nombres }}</td>
-                <td>
-                  {{ estudiante.apellidos }}
-                </td>
+                <td>{{ estudiante.apellidos }}</td>
                 <td>{{ estudiante.cedula }}</td>
                 <td>
-                  <span class="badge bg-primary">
-                    {{ estudiante.grado }}
-                  </span>
+                  <span class="badge bg-primary">{{ estudiante.grado }}</span>
                 </td>
                 <td>{{ estudiante.paralelo }}</td>
                 <td>
                   <span
-                    v-if="
-                      estudiante.alergias &&
-                      estudiante.alergias.length >
-                        0
-                    "
+                    v-if="estudiante.alergias && estudiante.alergias.length > 0"
                     class="badge bg-warning text-dark"
                   >
-                    <i
-                      class="bi bi-exclamation-triangle me-1"
-                    ></i>
-                    {{
-                      estudiante.alergias.length
-                    }}
+                    <i class="bi bi-exclamation-triangle me-1"></i>
+                    {{ estudiante.alergias.length }}
                   </span>
-                  <span v-else class="text-muted">
-                    Ninguna
-                  </span>
+                  <span v-else class="text-muted">Ninguna</span>
                 </td>
                 <td>
                   <span
                     class="badge"
-                    :class="
-                      estudiante.estado ===
-                      'activo'
-                        ? 'bg-success'
-                        : 'bg-secondary'
-                    "
+                    :class="estudiante.estado === 'activo' ? 'bg-success' : 'bg-secondary'"
                   >
                     {{ estudiante.estado }}
                   </span>
                 </td>
                 <td>
-                  <div
-                    class="btn-group btn-group-sm"
-                  >
+                  <div class="btn-group btn-group-sm">
                     <button
                       class="btn btn-outline-info"
-                      :title="
-                        $t(
-                          'admin.estudiantes.ver'
-                        )
-                      "
-                      @click="
-                        verEstudiante(estudiante)
-                      "
+                      :title="$t('admin.estudiantes.ver')"
+                      @click="verEstudiante(estudiante)"
                     >
                       <i class="bi bi-eye"></i>
                     </button>
                     <button
-                      class="btn btn-outline-primary"
-                      :title="
-                        $t(
-                          'admin.estudiantes.editar'
-                        )
-                      "
-                      @click="
-                        editarEstudiante(
-                          estudiante
-                        )
-                      "
-                    >
-                      <i class="bi bi-pencil"></i>
-                    </button>
-                    <button
                       class="btn btn-outline-danger"
-                      :title="
-                        $t(
-                          'admin.estudiantes.eliminar'
-                        )
-                      "
-                      @click="
-                        confirmarEliminar(
-                          estudiante
-                        )
-                      "
+                      :title="$t('admin.estudiantes.eliminar')"
+                      @click="confirmarEliminar(estudiante)"
                     >
                       <i class="bi bi-trash"></i>
                     </button>
@@ -437,82 +259,30 @@
         </div>
 
         <!-- Paginación -->
-        <div
-          class="d-flex justify-content-between align-items-center mt-3"
-        >
+        <div class="d-flex justify-content-between align-items-center mt-3">
           <div>
-            <select
-              v-model="itemsPorPagina"
-              class="form-select form-select-sm"
-              style="width: auto"
-            >
-              <option :value="10">
-                10 por página
-              </option>
-              <option :value="25">
-                25 por página
-              </option>
-              <option :value="50">
-                50 por página
-              </option>
-              <option :value="100">
-                100 por página
-              </option>
+            <select v-model="itemsPorPagina" class="form-select form-select-sm" style="width: auto">
+              <option :value="10">10 por página</option>
+              <option :value="25">25 por página</option>
+              <option :value="50">50 por página</option>
+              <option :value="100">100 por página</option>
             </select>
           </div>
           <nav>
-            <ul
-              class="pagination pagination-sm mb-0"
-            >
-              <li
-                class="page-item"
-                :class="{
-                  disabled: paginaActual === 1,
-                }"
-              >
-                <button
-                  class="page-link"
-                  @click="
-                    cambiarPagina(
-                      paginaActual - 1
-                    )
-                  "
-                >
-                  Anterior
-                </button>
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item" :class="{ disabled: paginaActual === 1 }">
+                <button class="page-link" @click="cambiarPagina(paginaActual - 1)">Anterior</button>
               </li>
               <li
                 v-for="pagina in paginasVisibles"
                 :key="pagina"
                 class="page-item"
-                :class="{
-                  active: pagina === paginaActual,
-                }"
+                :class="{ active: pagina === paginaActual }"
               >
-                <button
-                  class="page-link"
-                  @click="cambiarPagina(pagina)"
-                >
-                  {{ pagina }}
-                </button>
+                <button class="page-link" @click="cambiarPagina(pagina)">{{ pagina }}</button>
               </li>
-              <li
-                class="page-item"
-                :class="{
-                  disabled:
-                    paginaActual === totalPaginas,
-                }"
-              >
-                <button
-                  class="page-link"
-                  @click="
-                    cambiarPagina(
-                      paginaActual + 1
-                    )
-                  "
-                >
-                  Siguiente
-                </button>
+              <li class="page-item" :class="{ disabled: paginaActual === totalPaginas }">
+                <button class="page-link" @click="cambiarPagina(paginaActual + 1)">Siguiente</button>
               </li>
             </ul>
           </nav>
@@ -520,7 +290,7 @@
       </div>
     </div>
 
-    <!-- Modal Ver Estudiante -->
+    <!-- Modal Ver/Editar Estudiante -->
     <Teleport to="body">
       <div
         v-if="estudianteSeleccionado"
@@ -528,271 +298,216 @@
         tabindex="-1"
         @click.self="cerrarModal"
       >
-        <div
-          class="modal-dialog modal-lg modal-dialog-scrollable"
-        >
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">
-                <i
-                  class="bi bi-person-circle me-2"
-                ></i>
-                Información del Estudiante
+                <i class="bi bi-person-circle me-2"></i>
+                {{ modoEdicion ? 'Editar Estudiante' : 'Información del Estudiante' }}
               </h5>
-              <button
-                type="button"
-                class="btn-close"
-                @click="cerrarModal"
-              ></button>
+              <button type="button" class="btn-close" @click="cerrarModal"></button>
             </div>
             <div class="modal-body">
-              <div class="row">
-                <div
-                  class="col-md-4 text-center mb-3"
-                >
-                  <div
-                    v-if="
-                      estudianteSeleccionado.foto
-                    "
-                    class="avatar-lg mx-auto mb-3"
-                  >
+              <!-- Modo Vista -->
+              <div v-if="!modoEdicion" class="row">
+                <div class="col-md-4 text-center mb-3">
+                  <div v-if="estudianteSeleccionado.foto" class="avatar-lg mx-auto mb-3">
                     <img
-                      :src="
-                        estudianteSeleccionado.foto
-                      "
-                      :alt="
-                        estudianteSeleccionado.nombres
-                      "
+                      :src="estudianteSeleccionado.foto"
+                      :alt="estudianteSeleccionado.nombres"
                       class="rounded-circle w-100"
                     />
                   </div>
-                  <div
-                    v-else
-                    class="avatar-lg avatar-placeholder mx-auto mb-3"
-                  >
-                    {{
-                      getIniciales(
-                        estudianteSeleccionado.nombres,
-                        estudianteSeleccionado.apellidos
-                      )
-                    }}
+                  <div v-else class="avatar-lg avatar-placeholder mx-auto mb-3">
+                    {{ getIniciales(estudianteSeleccionado.nombres, estudianteSeleccionado.apellidos) }}
                   </div>
                   <h5>
-                    {{
-                      estudianteSeleccionado.nombres
-                    }}
-                    {{
-                      estudianteSeleccionado.apellidos
-                    }}
+                    {{ estudianteSeleccionado.nombres }} {{ estudianteSeleccionado.apellidos }}
                   </h5>
                   <span
                     class="badge"
-                    :class="
-                      estudianteSeleccionado.estado ===
-                      'activo'
-                        ? 'bg-success'
-                        : 'bg-secondary'
-                    "
+                    :class="estudianteSeleccionado.estado === 'activo' ? 'bg-success' : 'bg-secondary'"
                   >
-                    {{
-                      estudianteSeleccionado.estado
-                    }}
+                    {{ estudianteSeleccionado.estado }}
                   </span>
                 </div>
                 <div class="col-md-8">
-                  <h6
-                    class="border-bottom pb-2 mb-3"
-                  >
-                    Información Personal
-                  </h6>
+                  <h6 class="border-bottom pb-2 mb-3">Información Personal</h6>
                   <dl class="row">
-                    <dt class="col-sm-4">
-                      Cédula:
-                    </dt>
-                    <dd class="col-sm-8">
-                      {{
-                        estudianteSeleccionado.cedula
-                      }}
-                    </dd>
-
-                    <dt class="col-sm-4">
-                      Fecha de Nacimiento:
-                    </dt>
-                    <dd class="col-sm-8">
-                      {{
-                        estudianteSeleccionado.fechaNacimiento
-                      }}
-                    </dd>
-
-                    <dt class="col-sm-4">
-                      Edad:
-                    </dt>
-                    <dd class="col-sm-8">
-                      {{
-                        calcularEdad(
-                          estudianteSeleccionado.fechaNacimiento
-                        )
-                      }}
-                      años
-                    </dd>
-
-                    <dt class="col-sm-4">
-                      Género:
-                    </dt>
-                    <dd class="col-sm-8">
-                      {{
-                        estudianteSeleccionado.genero
-                      }}
-                    </dd>
+                    <dt class="col-sm-4">Cédula:</dt>
+                    <dd class="col-sm-8">{{ estudianteSeleccionado.cedula }}</dd>
+                    <dt class="col-sm-4">Fecha de Nacimiento:</dt>
+                    <dd class="col-sm-8">{{ estudianteSeleccionado.fechaNacimiento }}</dd>
+                    <dt class="col-sm-4">Edad:</dt>
+                    <dd class="col-sm-8">{{ calcularEdad(estudianteSeleccionado.fechaNacimiento) }} años</dd>
+                    <dt class="col-sm-4">Género:</dt>
+                    <dd class="col-sm-8">{{ estudianteSeleccionado.genero }}</dd>
                   </dl>
 
-                  <h6
-                    class="border-bottom pb-2 mb-3"
-                  >
-                    Información Académica
-                  </h6>
+                  <h6 class="border-bottom pb-2 mb-3">Información Académica</h6>
                   <dl class="row">
-                    <dt class="col-sm-4">
-                      Grado:
-                    </dt>
-                    <dd class="col-sm-8">
-                      {{
-                        estudianteSeleccionado.grado
-                      }}
-                    </dd>
-
-                    <dt class="col-sm-4">
-                      Paralelo:
-                    </dt>
-                    <dd class="col-sm-8">
-                      {{
-                        estudianteSeleccionado.paralelo
-                      }}
-                    </dd>
-
-                    <dt class="col-sm-4">
-                      Año Lectivo:
-                    </dt>
-                    <dd class="col-sm-8">
-                      {{
-                        estudianteSeleccionado.anioLectivo
-                      }}
-                    </dd>
+                    <dt class="col-sm-4">Grado:</dt>
+                    <dd class="col-sm-8">{{ estudianteSeleccionado.grado }}</dd>
+                    <dt class="col-sm-4">Paralelo:</dt>
+                    <dd class="col-sm-8">{{ estudianteSeleccionado.paralelo }}</dd>
+                    <dt class="col-sm-4">Año Lectivo:</dt>
+                    <dd class="col-sm-8">{{ estudianteSeleccionado.anioLectivo }}</dd>
                   </dl>
 
-                  <h6
-                    class="border-bottom pb-2 mb-3"
-                  >
-                    Información de Salud
-                  </h6>
+                  <h6 class="border-bottom pb-2 mb-3">Información de Salud</h6>
                   <dl class="row">
-                    <dt class="col-sm-4">
-                      Alergias:
-                    </dt>
+                    <dt class="col-sm-4">Alergias:</dt>
                     <dd class="col-sm-8">
-                      <span
-                        v-if="
-                          estudianteSeleccionado.alergias &&
-                          estudianteSeleccionado
-                            .alergias.length > 0
-                        "
-                      >
+                      <span v-if="estudianteSeleccionado.alergias && estudianteSeleccionado.alergias.length > 0">
                         <span
-                          v-for="(
-                            alergia, index
-                          ) in estudianteSeleccionado.alergias"
+                          v-for="(alergia, index) in estudianteSeleccionado.alergias"
                           :key="index"
                           class="badge bg-warning text-dark me-1"
                         >
                           {{ alergia }}
                         </span>
                       </span>
-                      <span
-                        v-else
-                        class="text-muted"
-                      >
-                        Ninguna registrada
-                      </span>
+                      <span v-else class="text-muted">Ninguna registrada</span>
                     </dd>
-
-                    <dt class="col-sm-4">
-                      Observaciones:
-                    </dt>
-                    <dd class="col-sm-8">
-                      {{
-                        estudianteSeleccionado.observaciones ||
-                        "Sin observaciones"
-                      }}
-                    </dd>
+                    <dt class="col-sm-4">Observaciones:</dt>
+                    <dd class="col-sm-8">{{ estudianteSeleccionado.observaciones || 'Sin observaciones' }}</dd>
                   </dl>
 
-                  <h6
-                    class="border-bottom pb-2 mb-3"
-                  >
-                    Representante
-                  </h6>
+                  <h6 class="border-bottom pb-2 mb-3">Representante</h6>
                   <dl class="row mb-0">
-                    <dt class="col-sm-4">
-                      Nombre:
-                    </dt>
-                    <dd class="col-sm-8">
-                      {{
-                        estudianteSeleccionado
-                          .representante?.nombre
-                      }}
-                    </dd>
-
-                    <dt class="col-sm-4">
-                      Teléfono:
-                    </dt>
-                    <dd class="col-sm-8">
-                      {{
-                        estudianteSeleccionado
-                          .representante?.telefono
-                      }}
-                    </dd>
-
-                    <dt class="col-sm-4">
-                      Email:
-                    </dt>
-                    <dd class="col-sm-8">
-                      {{
-                        estudianteSeleccionado
-                          .representante?.email
-                      }}
-                    </dd>
+                    <dt class="col-sm-4">Nombre:</dt>
+                    <dd class="col-sm-8">{{ estudianteSeleccionado.representante?.nombre }}</dd>
                   </dl>
                 </div>
               </div>
+
+              <!-- Modo Edición -->
+              <div v-else>
+                <form @submit.prevent="guardarCambios">
+                  <h6 class="border-bottom pb-2 mb-3">Información Personal</h6>
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <label class="form-label">Nombres *</label>
+                      <input v-model="formEdicion.nombres" type="text" class="form-control" required />
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Apellidos *</label>
+                      <input v-model="formEdicion.apellidos" type="text" class="form-control" required />
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <label class="form-label">Cédula *</label>
+                      <input v-model="formEdicion.cedula" type="text" class="form-control" required />
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Fecha de Nacimiento *</label>
+                      <input v-model="formEdicion.fechaNacimiento" type="date" class="form-control" required />
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <label class="form-label">Género *</label>
+                      <select v-model="formEdicion.genero" class="form-select" required>
+                        <option value="">Seleccione...</option>
+                        <option value="Masculino">Masculino</option>
+                        <option value="Femenino">Femenino</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Estado *</label>
+                      <select v-model="formEdicion.estado" class="form-select" required>
+                        <option value="activo">Activo</option>
+                        <option value="inactivo">Inactivo</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <h6 class="border-bottom pb-2 mb-3">Información Académica</h6>
+                  <div class="row mb-3">
+                    <div class="col-md-4">
+                      <label class="form-label">Grado *</label>
+                      <select v-model="formEdicion.grado" class="form-select" required>
+                        <option value="">Seleccione...</option>
+                        <option value="1ro">1ro</option>
+                        <option value="2do">2do</option>
+                        <option value="3ro">3ro</option>
+                        <option value="4to">4to</option>
+                        <option value="5to">5to</option>
+                        <option value="6to">6to</option>
+                        <option value="7mo">7mo</option>
+                      </select>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label">Paralelo *</label>
+                      <select v-model="formEdicion.paralelo" class="form-select" required>
+                        <option value="">Seleccione...</option>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                      </select>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label">Año Lectivo *</label>
+                      <input v-model="formEdicion.anioLectivo" type="text" class="form-control" placeholder="2024-2025" required />
+                    </div>
+                  </div>
+
+                  <h6 class="border-bottom pb-2 mb-3">Información de Salud</h6>
+                  <div class="row mb-3">
+                    <div class="col-12">
+                      <label class="form-label">Alergias</label>
+                      <input
+                        v-model="formEdicion.alergiasTexto"
+                        type="text"
+                        class="form-control"
+                        placeholder="Separar por comas (ej: Mani, Lactosa)"
+                      />
+                      <small class="text-muted">Ingrese las alergias separadas por comas</small>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-12">
+                      <label class="form-label">Observaciones</label>
+                      <textarea
+                        v-model="formEdicion.observaciones"
+                        class="form-control"
+                        rows="3"
+                        placeholder="Observaciones adicionales..."
+                      ></textarea>
+                    </div>
+                  </div>
+
+                  <h6 class="border-bottom pb-2 mb-3">Representante</h6>
+                  <div class="row mb-3">
+                    <div class="col-12">
+                      <label class="form-label">Nombre del Representante *</label>
+                      <input v-model="formEdicion.representante.nombre" type="text" class="form-control" required />
+                    </div>
+                  </div>
+                </form>
+              </div>
             </div>
             <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                @click="cerrarModal"
-              >
+              <button v-if="!modoEdicion" type="button" class="btn btn-secondary" @click="cerrarModal">
                 Cerrar
               </button>
-              <button
-                type="button"
-                class="btn btn-primary"
-                @click="
-                  editarEstudiante(
-                    estudianteSeleccionado
-                  )
-                "
-              >
+              <button v-if="!modoEdicion" type="button" class="btn btn-primary" @click="activarModoEdicion">
                 <i class="bi bi-pencil me-1"></i>
                 Editar
+              </button>
+              <button v-if="modoEdicion" type="button" class="btn btn-secondary" @click="cancelarEdicion">
+                Cancelar
+              </button>
+              <button v-if="modoEdicion" type="button" class="btn btn-primary" @click="guardarCambios">
+                <i class="bi bi-save me-1"></i>
+                Guardar Cambios
               </button>
             </div>
           </div>
         </div>
       </div>
-      <div
-        v-if="estudianteSeleccionado"
-        class="modal-backdrop fade show"
-      ></div>
+      <div v-if="estudianteSeleccionado" class="modal-backdrop fade show"></div>
     </Teleport>
 
     <!-- Modal Confirmar Eliminar -->
@@ -805,59 +520,27 @@
       >
         <div class="modal-dialog">
           <div class="modal-content">
-            <div
-              class="modal-header bg-danger text-white"
-            >
+            <div class="modal-header bg-danger text-white">
               <h5 class="modal-title">
-                <i
-                  class="bi bi-exclamation-triangle me-2"
-                ></i>
+                <i class="bi bi-exclamation-triangle me-2"></i>
                 Confirmar Eliminación
               </h5>
-              <button
-                type="button"
-                class="btn-close btn-close-white"
-                @click="cancelarEliminar"
-              ></button>
+              <button type="button" class="btn-close btn-close-white" @click="cancelarEliminar"></button>
             </div>
             <div class="modal-body">
-              <p>
-                ¿Está seguro que desea eliminar al
-                estudiante?
-              </p>
+              <p>¿Está seguro que desea eliminar al estudiante?</p>
               <div class="alert alert-warning">
-                <strong
-                  >{{
-                    estudianteAEliminar.nombres
-                  }}
-                  {{
-                    estudianteAEliminar.apellidos
-                  }}</strong
-                >
+                <strong>{{ estudianteAEliminar.nombres }} {{ estudianteAEliminar.apellidos }}</strong>
                 <br />
-                Cédula:
-                {{ estudianteAEliminar.cedula }}
+                Cédula: {{ estudianteAEliminar.cedula }}
               </div>
               <p class="text-muted mb-0">
-                <small
-                  >Esta acción no se puede
-                  deshacer.</small
-                >
+                <small>Esta acción no se puede deshacer.</small>
               </p>
             </div>
             <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                @click="cancelarEliminar"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                class="btn btn-danger"
-                @click="eliminarEstudiante"
-              >
+              <button type="button" class="btn btn-secondary" @click="cancelarEliminar">Cancelar</button>
+              <button type="button" class="btn btn-danger" @click="eliminarEstudiante">
                 <i class="bi bi-trash me-1"></i>
                 Eliminar
               </button>
@@ -865,10 +548,7 @@
           </div>
         </div>
       </div>
-      <div
-        v-if="estudianteAEliminar"
-        class="modal-backdrop fade show"
-      ></div>
+      <div v-if="estudianteAEliminar" class="modal-backdrop fade show"></div>
     </Teleport>
   </div>
 </template>
@@ -877,217 +557,105 @@
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useNotificationStore } from "@/stores/notification";
+import { useStudentsStore } from "@/stores/students";
 
 const router = useRouter();
 const notificationStore = useNotificationStore();
+const studentsStore = useStudentsStore();
 
-// Datos de ejemplo
-const estudiantes = ref([
-  {
-    id: 1,
-    nombres: "Juan Carlos",
-    apellidos: "Pérez García",
-    cedula: "0123456789",
-    fechaNacimiento: "2015-05-15",
-    genero: "Masculino",
-    grado: "3ro EGB",
-    paralelo: "A",
-    anioLectivo: "2024-2025",
-    alergias: ["Maní", "Lactosa"],
-    observaciones:
-      "Requiere atención especial en el comedor",
-    estado: "activo",
-    representante: {
-      nombre: "María García",
-      telefono: "0987654321",
-      email: "maria.garcia@example.com",
-    },
-    foto: null,
-  },
-  {
-    id: 2,
-    nombres: "Ana María",
-    apellidos: "López Martínez",
-    cedula: "0123456780",
-    fechaNacimiento: "2014-08-22",
-    genero: "Femenino",
-    grado: "4to EGB",
-    paralelo: "B",
-    anioLectivo: "2024-2025",
-    alergias: [],
-    observaciones: null,
-    estado: "activo",
-    representante: {
-      nombre: "Carlos López",
-      telefono: "0987654322",
-      email: "carlos.lopez@example.com",
-    },
-    foto: null,
-  },
-  {
-    id: 3,
-    nombres: "Pedro José",
-    apellidos: "Rodríguez Silva",
-    cedula: "0123456781",
-    fechaNacimiento: "2016-03-10",
-    genero: "Masculino",
-    grado: "2do EGB",
-    paralelo: "A",
-    anioLectivo: "2024-2025",
-    alergias: ["Gluten"],
-    observaciones: "Dieta sin gluten",
-    estado: "activo",
-    representante: {
-      nombre: "Laura Silva",
-      telefono: "0987654323",
-      email: "laura.silva@example.com",
-    },
-    foto: null,
-  },
-  {
-    id: 4,
-    nombres: "Sofía Isabel",
-    apellidos: "Gómez Torres",
-    cedula: "0123456782",
-    fechaNacimiento: "2015-11-05",
-    genero: "Femenino",
-    grado: "3ro EGB",
-    paralelo: "B",
-    anioLectivo: "2024-2025",
-    alergias: [],
-    observaciones: null,
-    estado: "activo",
-    representante: {
-      nombre: "Roberto Gómez",
-      telefono: "0987654324",
-      email: "roberto.gomez@example.com",
-    },
-    foto: null,
-  },
-  {
-    id: 5,
-    nombres: "Luis Fernando",
-    apellidos: "Hernández Ruiz",
-    cedula: "0123456783",
-    fechaNacimiento: "2014-01-20",
-    genero: "Masculino",
-    grado: "5to EGB",
-    paralelo: "A",
-    anioLectivo: "2024-2025",
-    alergias: ["Mariscos"],
-    observaciones: null,
-    estado: "inactivo",
-    representante: {
-      nombre: "Carmen Ruiz",
-      telefono: "0987654325",
-      email: "carmen.ruiz@example.com",
-    },
-    foto: null,
-  },
-]);
+const estudiantes = computed(() => studentsStore.allStudents);
 
-// Filtros
 const searchTerm = ref("");
 const filtroGrado = ref("");
 const filtroParalelo = ref("");
 const filtroEstado = ref("");
 
-// Ordenamiento
 const ordenColumna = ref("apellidos");
 const ordenDireccion = ref("asc");
 
-// Paginación
 const paginaActual = ref(1);
 const itemsPorPagina = ref(10);
 
-// Selección
 const seleccionarTodos = ref(false);
 const estudiantesSeleccionados = ref([]);
 
-// Modales
 const estudianteSeleccionado = ref(null);
 const estudianteAEliminar = ref(null);
+const modoEdicion = ref(false);
+const formEdicion = ref({
+  nombres: '',
+  apellidos: '',
+  cedula: '',
+  fechaNacimiento: '',
+  genero: '',
+  estado: '',
+  grado: '',
+  paralelo: '',
+  anioLectivo: '',
+  alergiasTexto: '',
+  observaciones: '',
+  representante: { nombre: '' }
+});
 
-// Datos para filtros
 const grados = computed(() => {
-  const gradosUnicos = new Set(
-    estudiantes.value.map((e) => e.grado)
-  );
+  const gradosUnicos = new Set(estudiantes.value.map((e) => e.grado));
   return Array.from(gradosUnicos).sort();
 });
 
 const paralelos = computed(() => {
-  const paralelosUnicos = new Set(
-    estudiantes.value.map((e) => e.paralelo)
-  );
+  const paralelosUnicos = new Set(estudiantes.value.map((e) => e.seccion || e.paralelo));
   return Array.from(paralelosUnicos).sort();
 });
 
-// Estadísticas
-const totalEstudiantes = computed(
-  () => estudiantes.value.length
+const totalEstudiantes = computed(() => estudiantes.value.length);
+
+const estudiantesActivos = computed(() =>
+  estudiantes.value.filter((e) => (e.estado || 'activo') === "activo").length
 );
 
-const estudiantesActivos = computed(
-  () =>
-    estudiantes.value.filter(
-      (e) => e.estado === "activo"
-    ).length
+const estudiantesAlergias = computed(() =>
+  estudiantes.value.filter((e) => 
+    e.alergias && (Array.isArray(e.alergias) ? e.alergias.length > 0 : e.alergias.trim().length > 0)
+  ).length
 );
 
-const estudiantesAlergias = computed(
-  () =>
-    estudiantes.value.filter(
-      (e) => e.alergias && e.alergias.length > 0
-    ).length
-);
+const totalGrados = computed(() => grados.value.length);
 
-const totalGrados = computed(
-  () => grados.value.length
-);
-
-// Filtrado
 const estudiantesFiltrados = computed(() => {
   let resultado = estudiantes.value;
 
-  // Filtro de búsqueda
   if (searchTerm.value) {
-    const termino =
-      searchTerm.value.toLowerCase();
-    resultado = resultado.filter(
-      (e) =>
-        e.nombres
-          .toLowerCase()
-          .includes(termino) ||
-        e.apellidos
-          .toLowerCase()
-          .includes(termino) ||
-        e.cedula.includes(termino)
-    );
+    const termino = searchTerm.value.toLowerCase();
+    resultado = resultado.filter((e) => {
+      const nombreCompleto = `${e.nombres} ${e.apellidos}`.toLowerCase();
+      const cedula = e.cedula || '';
+      const grado = (e.grado || '').toLowerCase();
+      
+      let tieneAlergia = false;
+      if (e.alergias) {
+        if (Array.isArray(e.alergias)) {
+          tieneAlergia = e.alergias.some(a => a.toLowerCase().includes(termino));
+        } else if (typeof e.alergias === 'string') {
+          tieneAlergia = e.alergias.toLowerCase().includes(termino);
+        }
+      }
+      
+      return nombreCompleto.includes(termino) || cedula.includes(termino) || grado.includes(termino) || tieneAlergia;
+    });
   }
 
-  // Filtro por grado
   if (filtroGrado.value) {
-    resultado = resultado.filter(
-      (e) => e.grado === filtroGrado.value
-    );
+    resultado = resultado.filter((e) => e.grado === filtroGrado.value);
   }
 
-  // Filtro por paralelo
   if (filtroParalelo.value) {
-    resultado = resultado.filter(
-      (e) => e.paralelo === filtroParalelo.value
-    );
+    resultado = resultado.filter((e) => (e.paralelo || e.seccion) === filtroParalelo.value);
   }
 
-  // Filtro por estado
   if (filtroEstado.value) {
-    resultado = resultado.filter(
-      (e) => e.estado === filtroEstado.value
-    );
+    resultado = resultado.filter((e) => (e.estado || 'activo') === filtroEstado.value);
   }
 
-  // Ordenamiento
   resultado.sort((a, b) => {
     let valorA = a[ordenColumna.value];
     let valorB = b[ordenColumna.value];
@@ -1106,37 +674,21 @@ const estudiantesFiltrados = computed(() => {
   return resultado;
 });
 
-// Paginación
 const totalPaginas = computed(() =>
-  Math.ceil(
-    estudiantesFiltrados.value.length /
-      itemsPorPagina.value
-  )
+  Math.ceil(estudiantesFiltrados.value.length / itemsPorPagina.value)
 );
 
 const estudiantesPaginados = computed(() => {
-  const inicio =
-    (paginaActual.value - 1) *
-    itemsPorPagina.value;
+  const inicio = (paginaActual.value - 1) * itemsPorPagina.value;
   const fin = inicio + itemsPorPagina.value;
-  return estudiantesFiltrados.value.slice(
-    inicio,
-    fin
-  );
+  return estudiantesFiltrados.value.slice(inicio, fin);
 });
 
 const paginasVisibles = computed(() => {
   const paginas = [];
   const maxPaginas = 5;
-  let inicio = Math.max(
-    1,
-    paginaActual.value -
-      Math.floor(maxPaginas / 2)
-  );
-  const fin = Math.min(
-    totalPaginas.value,
-    inicio + maxPaginas - 1
-  );
+  let inicio = Math.max(1, paginaActual.value - Math.floor(maxPaginas / 2));
+  const fin = Math.min(totalPaginas.value, inicio + maxPaginas - 1);
 
   if (fin - inicio < maxPaginas - 1) {
     inicio = Math.max(1, fin - maxPaginas + 1);
@@ -1149,7 +701,6 @@ const paginasVisibles = computed(() => {
   return paginas;
 });
 
-// Funciones
 function limpiarFiltros() {
   searchTerm.value = "";
   filtroGrado.value = "";
@@ -1159,10 +710,7 @@ function limpiarFiltros() {
 
 function ordenarPor(columna) {
   if (ordenColumna.value === columna) {
-    ordenDireccion.value =
-      ordenDireccion.value === "asc"
-        ? "desc"
-        : "asc";
+    ordenDireccion.value = ordenDireccion.value === "asc" ? "desc" : "asc";
   } else {
     ordenColumna.value = columna;
     ordenDireccion.value = "asc";
@@ -1170,46 +718,32 @@ function ordenarPor(columna) {
 }
 
 function cambiarPagina(pagina) {
-  if (
-    pagina >= 1 &&
-    pagina <= totalPaginas.value
-  ) {
+  if (pagina >= 1 && pagina <= totalPaginas.value) {
     paginaActual.value = pagina;
   }
 }
 
 function toggleSeleccionarTodos() {
   if (seleccionarTodos.value) {
-    estudiantesSeleccionados.value =
-      estudiantesPaginados.value.map((e) => e.id);
+    estudiantesSeleccionados.value = estudiantesPaginados.value.map((e) => e.id);
   } else {
     estudiantesSeleccionados.value = [];
   }
 }
 
 function getIniciales(nombres, apellidos) {
-  const inicialesNombre =
-    nombres.split(" ")[0][0] || "";
-  const inicialesApellido =
-    apellidos.split(" ")[0][0] || "";
-  return (
-    inicialesNombre + inicialesApellido
-  ).toUpperCase();
+  const inicialesNombre = nombres.split(" ")[0][0] || "";
+  const inicialesApellido = apellidos.split(" ")[0][0] || "";
+  return (inicialesNombre + inicialesApellido).toUpperCase();
 }
 
 function calcularEdad(fechaNacimiento) {
   const hoy = new Date();
   const nacimiento = new Date(fechaNacimiento);
-  let edad =
-    hoy.getFullYear() - nacimiento.getFullYear();
-  const mes =
-    hoy.getMonth() - nacimiento.getMonth();
+  let edad = hoy.getFullYear() - nacimiento.getFullYear();
+  const mes = hoy.getMonth() - nacimiento.getMonth();
 
-  if (
-    mes < 0 ||
-    (mes === 0 &&
-      hoy.getDate() < nacimiento.getDate())
-  ) {
+  if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
     edad--;
   }
 
@@ -1217,21 +751,84 @@ function calcularEdad(fechaNacimiento) {
 }
 
 function goToRegistro() {
-  router.push({
-    name: "admin-registro-estudiante",
-  });
+  router.push({ name: "admin-registro-estudiante" });
 }
 
 function verEstudiante(estudiante) {
   estudianteSeleccionado.value = estudiante;
+  modoEdicion.value = false;
 }
 
-function editarEstudiante(estudiante) {
-  cerrarModal();
-  router.push({
-    name: "admin-registro-estudiante",
-    params: { id: estudiante.id },
-  });
+function activarModoEdicion() {
+  modoEdicion.value = true;
+  
+  let alergiasTexto = '';
+  if (estudianteSeleccionado.value.alergias) {
+    if (Array.isArray(estudianteSeleccionado.value.alergias)) {
+      alergiasTexto = estudianteSeleccionado.value.alergias.join(', ');
+    } else if (typeof estudianteSeleccionado.value.alergias === 'string') {
+      alergiasTexto = estudianteSeleccionado.value.alergias;
+    }
+  }
+  
+  formEdicion.value = {
+    nombres: estudianteSeleccionado.value.nombres || '',
+    apellidos: estudianteSeleccionado.value.apellidos || '',
+    cedula: estudianteSeleccionado.value.cedula || '',
+    fechaNacimiento: estudianteSeleccionado.value.fechaNacimiento || '',
+    genero: estudianteSeleccionado.value.genero || '',
+    estado: estudianteSeleccionado.value.estado || 'activo',
+    grado: estudianteSeleccionado.value.grado || '',
+    paralelo: estudianteSeleccionado.value.paralelo || '',
+    anioLectivo: estudianteSeleccionado.value.anioLectivo || '',
+    alergiasTexto: alergiasTexto,
+    observaciones: estudianteSeleccionado.value.observaciones || '',
+    representante: {
+      nombre: estudianteSeleccionado.value.representante?.nombre || ''
+    }
+  };
+}
+
+function cancelarEdicion() {
+  modoEdicion.value = false;
+}
+
+function guardarCambios() {
+  const alergiasArray = formEdicion.value.alergiasTexto
+    .split(',')
+    .map(a => a.trim())
+    .filter(a => a.length > 0);
+  
+  const index = estudiantes.value.findIndex(e => e.id === estudianteSeleccionado.value.id);
+  
+  if (index !== -1) {
+    estudiantes.value[index] = {
+      ...estudiantes.value[index],
+      nombres: formEdicion.value.nombres,
+      apellidos: formEdicion.value.apellidos,
+      cedula: formEdicion.value.cedula,
+      fechaNacimiento: formEdicion.value.fechaNacimiento,
+      genero: formEdicion.value.genero,
+      estado: formEdicion.value.estado,
+      grado: formEdicion.value.grado,
+      paralelo: formEdicion.value.paralelo,
+      anioLectivo: formEdicion.value.anioLectivo,
+      alergias: alergiasArray,
+      observaciones: formEdicion.value.observaciones,
+      representante: {
+        nombre: formEdicion.value.representante.nombre
+      }
+    };
+    
+    estudianteSeleccionado.value = estudiantes.value[index];
+    
+    notificationStore.addNotification({
+      type: 'success',
+      message: 'Estudiante actualizado correctamente'
+    });
+    
+    modoEdicion.value = false;
+  }
 }
 
 function confirmarEliminar(estudiante) {
@@ -1239,15 +836,12 @@ function confirmarEliminar(estudiante) {
 }
 
 function eliminarEstudiante() {
-  const index = estudiantes.value.findIndex(
-    (e) => e.id === estudianteAEliminar.value.id
-  );
+  const index = estudiantes.value.findIndex(e => e.id === estudianteAEliminar.value.id);
   if (index !== -1) {
     estudiantes.value.splice(index, 1);
     notificationStore.addNotification({
       type: "success",
-      message:
-        "Estudiante eliminado correctamente",
+      message: "Estudiante eliminado correctamente",
     });
   }
   estudianteAEliminar.value = null;
@@ -1259,22 +853,77 @@ function cancelarEliminar() {
 
 function cerrarModal() {
   estudianteSeleccionado.value = null;
+  modoEdicion.value = false;
 }
 
 function exportarCSV() {
-  notificationStore.addNotification({
-    type: "info",
-    message: "Exportando a CSV...",
+  const headers = ['Nombres', 'Apellidos', 'Cédula', 'Grado', 'Edad', 'Email', 'Teléfono', 'Estado'];
+  const rows = estudiantesFiltrados.value.map(e => [
+    e.nombres,
+    e.apellidos,
+    e.cedula,
+    e.grado,
+    e.edad,
+    e.email || 'N/A',
+    e.telefono || 'N/A',
+    e.estado
+  ]);
+  
+  let csvContent = headers.join(',') + '\n';
+  rows.forEach(row => {
+    csvContent += row.map(cell => `"${cell}"`).join(',') + '\n';
   });
-  // Implementar exportación a CSV
+  
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `estudiantes_${new Date().toISOString().split('T')[0]}.csv`;
+  link.click();
+  
+  notificationStore.addNotification({
+    type: "success",
+    message: "CSV exportado correctamente",
+  });
 }
 
 function exportarExcel() {
-  notificationStore.addNotification({
-    type: "info",
-    message: "Exportando a Excel...",
+  const headers = ['Nombres', 'Apellidos', 'Cédula', 'Grado', 'Edad', 'Email', 'Teléfono', 'Estado'];
+  const rows = estudiantesFiltrados.value.map(e => [
+    e.nombres,
+    e.apellidos,
+    e.cedula,
+    e.grado,
+    e.edad,
+    e.email || 'N/A',
+    e.telefono || 'N/A',
+    e.estado
+  ]);
+  
+  let htmlTable = '<table border="1"><thead><tr>';
+  headers.forEach(h => {
+    htmlTable += `<th>${h}</th>`;
   });
-  // Implementar exportación a Excel
+  htmlTable += '</tr></thead><tbody>';
+  
+  rows.forEach(row => {
+    htmlTable += '<tr>';
+    row.forEach(cell => {
+      htmlTable += `<td>${cell}</td>`;
+    });
+    htmlTable += '</tr>';
+  });
+  htmlTable += '</tbody></table>';
+  
+  const blob = new Blob([htmlTable], { type: 'application/vnd.ms-excel' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `estudiantes_${new Date().toISOString().split('T')[0]}.xls`;
+  link.click();
+  
+  notificationStore.addNotification({
+    type: "success",
+    message: "Excel exportado correctamente",
+  });
 }
 </script>
 
@@ -1347,12 +996,7 @@ function exportarExcel() {
 .avatar-placeholder {
   width: 100%;
   height: 100%;
-  /* Darker gradient to ensure sufficient contrast with the white text */
-  background: linear-gradient(
-    135deg,
-    #3e46a6 0%,
-    #47246f 100%
-  );
+  background: linear-gradient(135deg, #3e46a6 0%, #47246f 100%);
   color: #ffffff;
   border-radius: 50%;
   display: flex;
@@ -1360,7 +1004,6 @@ function exportarExcel() {
   justify-content: center;
   font-weight: 600;
   font-size: 1rem;
-  /* Stronger shadow to improve perceived contrast on gradient edges */
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
 }
 

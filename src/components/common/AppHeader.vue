@@ -53,9 +53,10 @@
                 <i class="bi bi-search"></i>
               </span>
               <input
+                ref="searchInputRef"
                 type="search"
                 class="form-control border-start-0"
-                :placeholder="$t('common.search')"
+                :placeholder="searchPlaceholder"
                 v-model="searchQuery"
                 @input="handleSearch"
                 aria-label="Búsqueda global"
@@ -479,11 +480,218 @@
         </div>
       </Transition>
     </Teleport>
+
+    <!-- Panel de Notificaciones -->
+    <Teleport to="body">
+      <Transition name="fade">
+        <div
+          v-if="showNotificationsPanel"
+          class="notifications-overlay"
+          @click="closeNotificationsPanel"
+        >
+          <div class="notifications-panel" @click.stop>
+            <div class="notifications-header">
+              <div>
+                <h5 class="mb-0">
+                  <i class="bi bi-bell me-2"></i>
+                  Notificaciones
+                </h5>
+                <small class="text-muted">
+                  {{ unreadCount }} sin leer
+                </small>
+              </div>
+              <div class="d-flex gap-2">
+                <button
+                  v-if="notificationsList.length > 0"
+                  class="btn btn-sm btn-outline-primary"
+                  @click="marcarTodasComoLeidas"
+                  title="Marcar todas como leídas"
+                >
+                  <i class="bi bi-check-all"></i>
+                </button>
+                <button
+                  class="btn btn-sm btn-close"
+                  @click="closeNotificationsPanel"
+                  aria-label="Cerrar"
+                ></button>
+              </div>
+            </div>
+            
+            <div class="notifications-body">
+              <!-- Sin notificaciones -->
+              <div
+                v-if="notificationsList.length === 0"
+                class="text-center py-5 text-muted"
+              >
+                <i class="bi bi-inbox display-1"></i>
+                <p class="mt-3 mb-0">No hay notificaciones</p>
+                <small>Aquí aparecerán las alertas del nutricionista</small>
+              </div>
+
+              <!-- Lista de notificaciones -->
+              <div v-else class="notifications-list">
+                <div
+                  v-for="notification in notificationsList"
+                  :key="notification.id"
+                  class="notification-item"
+                  :class="{
+                    'notification-unread': !notification.leida,
+                    [`notification-${getNotificationColor(notification.tipo)}`]: true
+                  }"
+                >
+                  <div class="notification-icon">
+                    <i 
+                      class="bi"
+                      :class="getNotificationIcon(notification.tipo)"
+                    ></i>
+                  </div>
+                  
+                  <div class="notification-content">
+                    <div class="notification-header-item">
+                      <h6 class="mb-1">
+                        {{ notification.titulo }}
+                        <span
+                          v-if="!notification.leida"
+                          class="badge bg-primary ms-2"
+                          style="font-size: 0.65rem;"
+                        >
+                          Nueva
+                        </span>
+                      </h6>
+                      <small class="text-muted">
+                        {{ formatearFecha(notification.fechaHora) }}
+                      </small>
+                    </div>
+                    
+                    <p class="notification-message mb-2">
+                      {{ notification.mensaje }}
+                    </p>
+                    
+                    <div class="notification-footer">
+                      <span 
+                        class="badge"
+                        :class="`bg-${getNotificationColor(notification.tipo)}`"
+                      >
+                        {{ notification.tipo.replace('-', ' ') }}
+                      </span>
+                      
+                      <div class="notification-actions">
+                        <button
+                          v-if="!notification.leida"
+                          class="btn btn-sm btn-link text-primary"
+                          @click="marcarComoLeida(notification.id)"
+                          title="Marcar como leída"
+                        >
+                          <i class="bi bi-check"></i> Marcar leída
+                        </button>
+                        <button
+                          v-if="notification.esRetroalimentacion && authStore.user?.role === 'nutricionista'"
+                          class="btn btn-sm btn-link text-success"
+                          @click="responderRetroalimentacion(notification)"
+                          title="Responder retroalimentación"
+                        >
+                          <i class="bi bi-reply-fill"></i> Responder
+                        </button>
+                        <button
+                          class="btn btn-sm btn-link text-danger"
+                          @click="eliminarNotificacion(notification.id)"
+                          title="Eliminar notificación"
+                        >
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
+    <!-- Modal para Responder Retroalimentación -->
+    <Teleport to="body">
+      <Transition name="fade">
+        <div
+          v-if="showRespuestaModal"
+          class="modal-overlay"
+          @click="cerrarModalRespuesta"
+        >
+          <div class="modal-respuesta" @click.stop>
+            <div class="modal-header-respuesta">
+              <div>
+                <h5 class="mb-1">
+                  <i class="bi bi-reply-fill me-2"></i>
+                  Responder Retroalimentación
+                </h5>
+                <small class="text-muted">{{ respuestaData.titulo }}</small>
+              </div>
+              <button
+                class="btn btn-sm btn-close"
+                @click="cerrarModalRespuesta"
+                aria-label="Cerrar"
+              ></button>
+            </div>
+
+            <div class="modal-body-respuesta">
+              <!-- Información de la retroalimentación original -->
+              <div class="alert alert-info mb-3">
+                <div class="d-flex align-items-start gap-2">
+                  <i class="bi bi-info-circle-fill"></i>
+                  <div class="flex-grow-1">
+                    <strong>Mensaje original:</strong>
+                    <p class="mb-0 mt-1 small">{{ respuestaData.mensajeOriginal }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Textarea para la respuesta -->
+              <div class="mb-3">
+                <label class="form-label fw-bold">
+                  Tu respuesta <span class="text-danger">*</span>
+                </label>
+                <textarea
+                  ref="respuestaTextarea"
+                  v-model="respuestaTexto"
+                  class="form-control"
+                  rows="5"
+                  placeholder="Escribe tu respuesta al representante..."
+                  :maxlength="500"
+                ></textarea>
+                <small class="text-muted">
+                  {{ respuestaTexto.length }}/500 caracteres
+                </small>
+              </div>
+
+              <!-- Botones de acción -->
+              <div class="d-flex gap-2 justify-content-end">
+                <button
+                  class="btn btn-secondary"
+                  @click="cerrarModalRespuesta"
+                >
+                  <i class="bi bi-x-circle me-1"></i>
+                  Cancelar
+                </button>
+                <button
+                  class="btn btn-success"
+                  @click="enviarRespuesta"
+                  :disabled="!respuestaTexto.trim()"
+                >
+                  <i class="bi bi-send-fill me-1"></i>
+                  Enviar Respuesta
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </header>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, onUnmounted, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
@@ -512,6 +720,7 @@ const accessibilityStore =
 const themeStore = useThemeStore();
 
 const searchQuery = ref("");
+const searchInputRef = ref(null);
 const showMobileMenu = ref(false);
 const showThemeMenu = ref(false);
 const showLanguageMenu = ref(false);
@@ -519,7 +728,44 @@ const showUserMenu = ref(false);
 const showSearchModal = ref(false);
 const searchResults = ref([]);
 const isSearching = ref(false);
-const unreadCount = ref(3); // Simulado
+const showNotificationsPanel = ref(false);
+const notificationsList = ref([]);
+const showRespuestaModal = ref(false);
+const respuestaTexto = ref('');
+const respuestaData = ref({
+  notificationId: null,
+  titulo: '',
+  mensajeOriginal: '',
+  representanteId: null,
+  tipo: ''
+});
+const respuestaTextarea = ref(null);
+
+// Computed para contar notificaciones no leídas
+const unreadCount = computed(() => {
+  try {
+    const userRole = authStore.user?.role;
+    
+    if (userRole === 'representante') {
+      // Representantes: contar alertas no leídas
+      const alertasGuardadas = localStorage.getItem('alertas_notificaciones');
+      if (alertasGuardadas) {
+        const alertas = JSON.parse(alertasGuardadas);
+        return alertas.filter(alerta => (alerta.estado === 'enviada' || alerta.esRespuesta === true) && !alerta.leida).length;
+      }
+    } else if (userRole === 'nutricionista') {
+      // Nutricionistas: contar retroalimentaciones no vistas
+      const retroalimentacionesGuardadas = localStorage.getItem('retroalimentaciones_comidas');
+      if (retroalimentacionesGuardadas) {
+        const retroalimentaciones = JSON.parse(retroalimentacionesGuardadas);
+        return retroalimentaciones.filter(retro => !retro.vistaPorNutricionista).length;
+      }
+    }
+  } catch (error) {
+    console.error('Error al contar notificaciones:', error);
+  }
+  return 0;
+});
 
 const currentLanguage = computed(
   () => locale.value
@@ -569,6 +815,13 @@ const themeName = computed(() => {
     sepia: "Sepia",
   };
   return names[themeStore.currentTheme] || "Tema";
+});
+
+const searchPlaceholder = computed(() => {
+  const role = authStore.user?.role;
+  if (role === "admin") return "Buscar estudiantes, nutricionistas, reportes...";
+  if (role === "nutricionista") return "Buscar menús, estudiantes, perfil...";
+  return "Buscar en mi perfil, estudiantes...";
 });
 
 const homeRoute = computed(() => {
@@ -657,23 +910,53 @@ function handleSearch() {
       } else if (role === "nutricionista") {
         allPages = [
           {
-            title: "Dashboard",
+            title: "Panel Nutricionista",
             path: "/nutricionista",
             description:
-              "Panel del nutricionista",
+              "Dashboard con estadísticas y menús personalizados",
             icon: "bi-speedometer2",
           },
           {
-            title: "Menú Semanal",
+            title: "Gestión Menú Semanal",
             path: "/nutricionista/menu-semanal",
-            description: "Gestionar menús",
+            description: "Gestionar y actualizar menús semanales",
             icon: "bi-calendar-week",
           },
           {
-            title: "Perfil",
-            path: "/nutricionista/perfil",
-            description: "Mi perfil",
-            icon: "bi-person",
+            title: "Recomendaciones",
+            path: "/nutricionista/recomendaciones",
+            description: "Crear recomendaciones nutricionales para estudiantes",
+            icon: "bi-heart-pulse",
+          },
+          {
+            title: "Alertas y Notificaciones",
+            path: "/nutricionista/alertas",
+            description: "Gestionar alertas y comunicación con representantes",
+            icon: "bi-bell",
+          },
+          {
+            title: "Estudiantes",
+            path: "/nutricionista",
+            description: "Ver lista de estudiantes asignados",
+            icon: "bi-people-fill",
+          },
+          {
+            title: "Estadísticas",
+            path: "/nutricionista",
+            description: "Ver estadísticas del sistema",
+            icon: "bi-graph-up",
+          },
+          {
+            title: "Reportes",
+            path: "/nutricionista",
+            description: "Generar reportes nutricionales",
+            icon: "bi-file-earmark-text",
+          },
+          {
+            title: "Menú Personalizado",
+            path: "/nutricionista",
+            description: "Asignar menús personalizados a estudiantes",
+            icon: "bi-person-badge",
           },
         ];
       } else {
@@ -681,15 +964,63 @@ function handleSearch() {
           {
             title: "Inicio",
             path: "/usuario",
-            description: "Página principal",
+            description: "Página principal con menús y recomendaciones",
             icon: "bi-house",
           },
           {
             title: "Perfil",
             path: "/usuario/perfil",
             description:
-              "Mi perfil y estudiantes",
+              "Mi perfil y estudiantes a cargo",
             icon: "bi-person",
+          },
+          {
+            title: "Mis Hijos",
+            path: "/usuario",
+            description: "Ver información de mis hijos",
+            icon: "bi-people-fill",
+          },
+          {
+            title: "Menú del Día",
+            path: "/usuario",
+            description: "Ver menú de hoy",
+            icon: "bi-calendar-check",
+          },
+          {
+            title: "Menú Semanal",
+            path: "/usuario",
+            description: "Ver menú de la semana",
+            icon: "bi-calendar-week",
+          },
+          {
+            title: "Agregar Estudiante",
+            path: "/usuario",
+            description: "Registrar nuevo hijo",
+            icon: "bi-person-plus",
+          },
+          {
+            title: "Recomendaciones Nutricionales",
+            path: "/usuario",
+            description: "Ver recomendaciones del nutricionista",
+            icon: "bi-heart-pulse",
+          },
+          {
+            title: "Menú Personalizado",
+            path: "/usuario",
+            description: "Ver menús personalizados de mis hijos",
+            icon: "bi-clipboard-check",
+          },
+          {
+            title: "Términos y Condiciones",
+            path: "/terminos",
+            description: "Leer términos y condiciones",
+            icon: "bi-file-text",
+          },
+          {
+            title: "Política de Privacidad",
+            path: "/politica-privacidad",
+            description: "Leer política de privacidad",
+            icon: "bi-shield-check",
           },
         ];
       }
@@ -727,20 +1058,312 @@ function closeSearchModal() {
 }
 
 function toggleNotifications() {
-  // Mostrar notificaciones simuladas
-  const notifications = [
-    "Nuevo estudiante registrado: Juan Pérez",
-    "Menú semanal actualizado",
-    "Recordatorio: Revisar reportes mensuales",
-  ];
+  showNotificationsPanel.value = !showNotificationsPanel.value;
+  if (showNotificationsPanel.value) {
+    cargarNotificaciones();
+  }
+}
 
-  const message = notifications.join("\n• ");
-  alert(
-    `Notificaciones (${unreadCount.value})\n\n• ${message}`
-  );
+function cargarNotificaciones() {
+  try {
+    const userRole = authStore.user?.role;
+    
+    if (userRole === 'representante') {
+      // Para representantes: cargar alertas del nutricionista y respuestas
+      const alertasGuardadas = localStorage.getItem('alertas_notificaciones');
+      
+      if (alertasGuardadas) {
+        const alertas = JSON.parse(alertasGuardadas);
+        
+        // Filtrar alertas enviadas (incluye todas las alertas con estado enviada o respuestas)
+        const alertasFiltradas = alertas.filter(alerta => {
+          return alerta.estado === 'enviada' || alerta.esRespuesta === true;
+        });
+        
+        notificationsList.value = alertasFiltradas
+          .sort((a, b) => new Date(b.fechaHora) - new Date(a.fechaHora))
+          .map((alerta, index) => ({
+            ...alerta,
+            id: alerta.id || index,
+            leida: alerta.leida || false,
+            tipo: alerta.tipo || 'general'
+          }));
+      } else {
+        notificationsList.value = [];
+      }
+    } else if (userRole === 'nutricionista') {
+      // Para nutricionistas: cargar retroalimentaciones de usuarios
+      const retroalimentacionesGuardadas = localStorage.getItem('retroalimentaciones_comidas');
+      
+      if (retroalimentacionesGuardadas) {
+        const retroalimentaciones = JSON.parse(retroalimentacionesGuardadas);
+        
+        // Convertir retroalimentaciones a formato de notificación (mostrar todas, no solo las no vistas)
+        notificationsList.value = retroalimentaciones
+          .sort((a, b) => new Date(b.fechaRegistro) - new Date(a.fechaRegistro))
+          .map(retro => ({
+            id: retro.id,
+            tipo: retro.tipo, // 'evaluacion', 'reporte', 'sugerencia'
+            titulo: obtenerTituloRetroalimentacion(retro),
+            mensaje: obtenerMensajeRetroalimentacion(retro),
+            fechaHora: retro.fechaRegistro,
+            leida: retro.vistaPorNutricionista || false,
+            esRetroalimentacion: true,
+            datosOriginales: retro
+          }));
+      } else {
+        notificationsList.value = [];
+      }
+    } else {
+      notificationsList.value = [];
+    }
+  } catch (error) {
+    console.error('Error al cargar notificaciones:', error);
+    notificationsList.value = [];
+  }
+}
 
-  // Marcar como leídas
-  unreadCount.value = 0;
+function obtenerTituloRetroalimentacion(retro) {
+  const titulos = {
+    'evaluacion': `Evaluación de comida - ${retro.estudianteNombre}`,
+    'reporte': `Reporte de problema - ${retro.estudianteNombre}`,
+    'sugerencia': retro.titulo || 'Nueva sugerencia'
+  };
+  return titulos[retro.tipo] || 'Nueva retroalimentación';
+}
+
+function obtenerMensajeRetroalimentacion(retro) {
+  if (retro.tipo === 'evaluacion') {
+    return `Calificación: ${retro.calificacion}/5 - ${retro.tipoComida} del ${new Date(retro.fecha).toLocaleDateString('es-VE')}`;
+  } else if (retro.tipo === 'reporte') {
+    return `${retro.tipoProblema} (${retro.urgencia}) - ${retro.descripcion.substring(0, 50)}...`;
+  } else if (retro.tipo === 'sugerencia') {
+    return retro.descripcion.substring(0, 80) + '...';
+  }
+  return '';
+}
+
+function marcarComoLeida(notificationId) {
+  try {
+    const userRole = authStore.user?.role;
+    
+    if (userRole === 'representante') {
+      // Marcar alerta como leída
+      const alertasGuardadas = localStorage.getItem('alertas_notificaciones');
+      if (alertasGuardadas) {
+        const alertas = JSON.parse(alertasGuardadas);
+        const alertaIndex = alertas.findIndex((a, idx) => (a.id || idx) === notificationId);
+        
+        if (alertaIndex !== -1) {
+          alertas[alertaIndex].leida = true;
+          localStorage.setItem('alertas_notificaciones', JSON.stringify(alertas));
+          cargarNotificaciones();
+        }
+      }
+    } else if (userRole === 'nutricionista') {
+      // Marcar retroalimentación como vista
+      const retroalimentacionesGuardadas = localStorage.getItem('retroalimentaciones_comidas');
+      if (retroalimentacionesGuardadas) {
+        const retroalimentaciones = JSON.parse(retroalimentacionesGuardadas);
+        const retroIndex = retroalimentaciones.findIndex(r => r.id === notificationId);
+        
+        if (retroIndex !== -1) {
+          retroalimentaciones[retroIndex].vistaPorNutricionista = true;
+          localStorage.setItem('retroalimentaciones_comidas', JSON.stringify(retroalimentaciones));
+          cargarNotificaciones();
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error al marcar como leída:', error);
+  }
+}
+
+function marcarTodasComoLeidas() {
+  try {
+    const userRole = authStore.user?.role;
+    
+    if (userRole === 'representante') {
+      const alertasGuardadas = localStorage.getItem('alertas_notificaciones');
+      if (alertasGuardadas) {
+        const alertas = JSON.parse(alertasGuardadas);
+        alertas.forEach(alerta => {
+          if (alerta.estado === 'enviada' || alerta.esRespuesta === true) {
+            alerta.leida = true;
+          }
+        });
+        localStorage.setItem('alertas_notificaciones', JSON.stringify(alertas));
+        cargarNotificaciones();
+      }
+    } else if (userRole === 'nutricionista') {
+      const retroalimentacionesGuardadas = localStorage.getItem('retroalimentaciones_comidas');
+      if (retroalimentacionesGuardadas) {
+        const retroalimentaciones = JSON.parse(retroalimentacionesGuardadas);
+        retroalimentaciones.forEach(retro => {
+          retro.vistaPorNutricionista = true;
+        });
+        localStorage.setItem('retroalimentaciones_comidas', JSON.stringify(retroalimentaciones));
+        cargarNotificaciones();
+      }
+    }
+  } catch (error) {
+    console.error('Error al marcar todas como leídas:', error);
+  }
+}
+
+function eliminarNotificacion(notificationId) {
+  try {
+    const userRole = authStore.user?.role;
+    
+    if (userRole === 'representante') {
+      const alertasGuardadas = localStorage.getItem('alertas_notificaciones');
+      if (alertasGuardadas) {
+        let alertas = JSON.parse(alertasGuardadas);
+        alertas = alertas.filter((a, idx) => (a.id || idx) !== notificationId);
+        localStorage.setItem('alertas_notificaciones', JSON.stringify(alertas));
+        cargarNotificaciones();
+      }
+    } else if (userRole === 'nutricionista') {
+      const retroalimentacionesGuardadas = localStorage.getItem('retroalimentaciones_comidas');
+      if (retroalimentacionesGuardadas) {
+        let retroalimentaciones = JSON.parse(retroalimentacionesGuardadas);
+        retroalimentaciones = retroalimentaciones.filter(r => r.id !== notificationId);
+        localStorage.setItem('retroalimentaciones_comidas', JSON.stringify(retroalimentaciones));
+        cargarNotificaciones();
+      }
+    }
+  } catch (error) {
+    console.error('Error al eliminar notificación:', error);
+  }
+}
+
+function getNotificationIcon(tipo) {
+  const icons = {
+    'cambio-menu': 'bi-calendar-event',
+    'alergia': 'bi-exclamation-triangle',
+    'recordatorio': 'bi-bell',
+    'general': 'bi-info-circle',
+    'evaluacion': 'bi-star-fill',
+    'reporte': 'bi-exclamation-circle-fill',
+    'sugerencia': 'bi-lightbulb-fill'
+  };
+  return icons[tipo] || 'bi-bell';
+}
+
+function getNotificationColor(tipo) {
+  const colors = {
+    'cambio-menu': 'primary',
+    'alergia': 'warning',
+    'recordatorio': 'info',
+    'general': 'secondary',
+    'evaluacion': 'success',
+    'reporte': 'danger',
+    'sugerencia': 'warning'
+  };
+  return colors[tipo] || 'secondary';
+}
+
+function formatearFecha(fechaHora) {
+  const fecha = new Date(fechaHora);
+  const ahora = new Date();
+  const diffMs = ahora - fecha;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHoras = Math.floor(diffMs / 3600000);
+  const diffDias = Math.floor(diffMs / 86400000);
+  
+  if (diffMins < 1) return 'Ahora mismo';
+  if (diffMins < 60) return `Hace ${diffMins} min`;
+  if (diffHoras < 24) return `Hace ${diffHoras}h`;
+  if (diffDias < 7) return `Hace ${diffDias}d`;
+  
+  return fecha.toLocaleDateString('es-VE', {
+    day: '2-digit',
+    month: 'short',
+    year: fecha.getFullYear() !== ahora.getFullYear() ? 'numeric' : undefined
+  });
+}
+
+function closeNotificationsPanel() {
+  showNotificationsPanel.value = false;
+}
+
+async function responderRetroalimentacion(notification) {
+  // Preparar datos para el modal
+  respuestaData.value = {
+    notificationId: notification.id,
+    titulo: notification.titulo,
+    mensajeOriginal: notification.mensaje,
+    representanteId: notification.datosOriginales.representanteId,
+    tipo: notification.tipo
+  };
+  respuestaTexto.value = '';
+  
+  // Mostrar modal
+  showRespuestaModal.value = true;
+  
+  // Enfocar textarea después de que el modal se renderice
+  await nextTick();
+  if (respuestaTextarea.value) {
+    respuestaTextarea.value.focus();
+  }
+}
+
+function cerrarModalRespuesta() {
+  showRespuestaModal.value = false;
+  respuestaTexto.value = '';
+  respuestaData.value = {
+    notificationId: null,
+    titulo: '',
+    mensajeOriginal: '',
+    representanteId: null,
+    tipo: ''
+  };
+}
+
+async function enviarRespuesta() {
+  if (!respuestaTexto.value.trim()) return;
+  
+  try {
+    // Marcar la retroalimentación como leída
+    marcarComoLeida(respuestaData.value.notificationId);
+    
+    // Crear una nueva alerta para el representante
+    const alertasGuardadas = localStorage.getItem('alertas_notificaciones') || '[]';
+    const alertas = JSON.parse(alertasGuardadas);
+    
+    const nuevaAlerta = {
+      id: `RESP-${Date.now()}`,
+      tipo: 'general',
+      prioridad: 'media',
+      titulo: `Respuesta del nutricionista`,
+      mensaje: respuestaTexto.value.trim(),
+      estado: 'enviada',
+      fechaHora: new Date().toISOString(),
+      leida: false,
+      esRespuesta: true,
+      retroalimentacionOriginalId: respuestaData.value.notificationId,
+      tipoOriginal: respuestaData.value.tipo,
+      representanteId: respuestaData.value.representanteId
+    };
+    
+    alertas.push(nuevaAlerta);
+    localStorage.setItem('alertas_notificaciones', JSON.stringify(alertas));
+    
+    // Importar notification store
+    const { useNotificationStore } = await import('@/stores/notification');
+    const notificationStore = useNotificationStore();
+    notificationStore.success('✅ Respuesta enviada al representante');
+    
+    // Cerrar modales
+    cerrarModalRespuesta();
+    closeNotificationsPanel();
+    
+  } catch (error) {
+    console.error('Error al enviar respuesta:', error);
+    const { useNotificationStore } = await import('@/stores/notification');
+    const notificationStore = useNotificationStore();
+    notificationStore.error('Error al enviar la respuesta');
+  }
 }
 
 function toggleAccessibility() {
@@ -756,6 +1379,35 @@ function handleImageError(e) {
   e.target.src =
     'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"%3E%3Crect fill="%230d6efd" width="40" height="40"/%3E%3Ctext x="50%25" y="50%25" fill="white" text-anchor="middle" dy=".3em" font-size="20" font-weight="bold"%3ESNE%3C/text%3E%3C/svg%3E';
 }
+
+function focusSearchInput() {
+  if (searchInputRef.value && props.showSearch) {
+    searchInputRef.value.focus();
+    searchInputRef.value.select();
+  }
+}
+
+function handleKeyboardShortcut(e) {
+  // Alt+F para enfocar búsqueda
+  if (e.altKey && e.key.toLowerCase() === 'f') {
+    e.preventDefault();
+    focusSearchInput();
+  }
+}
+
+// Lifecycle hooks
+onMounted(() => {
+  // Listener para Alt+F
+  globalThis.addEventListener('keydown', handleKeyboardShortcut);
+  
+  // Listener para el evento personalizado app:focus-search
+  globalThis.addEventListener('app:focus-search', focusSearchInput);
+});
+
+onUnmounted(() => {
+  globalThis.removeEventListener('keydown', handleKeyboardShortcut);
+  globalThis.removeEventListener('app:focus-search', focusSearchInput);
+});
 </script>
 
 <style scoped>
@@ -1001,6 +1653,347 @@ function handleImageError(e) {
 
   .search-modal-overlay {
     padding-top: 60px;
+  }
+}
+
+/* Estilos del Panel de Notificaciones */
+.notifications-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 80px;
+  z-index: 9999;
+}
+
+.notifications-panel {
+  background: var(--bg-primary);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  animation: slideDown 0.3s ease;
+}
+
+.notifications-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 2px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, var(--primary) 0%, #0056b3 100%);
+  color: white;
+  border-radius: 12px 12px 0 0;
+}
+
+.notifications-header h5 {
+  margin: 0;
+  font-weight: 600;
+}
+
+.notifications-header small {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.notifications-body {
+  overflow-y: auto;
+  max-height: calc(80vh - 80px);
+  padding: 0.5rem;
+}
+
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.notification-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 10px;
+  background: var(--bg-secondary);
+  border-left: 4px solid var(--border-color);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.notification-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.notification-item.notification-unread {
+  background: rgba(13, 110, 253, 0.05);
+  border-left-color: var(--primary);
+}
+
+.notification-item.notification-primary {
+  border-left-color: #0d6efd;
+}
+
+.notification-item.notification-warning {
+  border-left-color: #ffc107;
+}
+
+.notification-item.notification-info {
+  border-left-color: #0dcaf0;
+}
+
+.notification-item.notification-secondary {
+  border-left-color: #6c757d;
+}
+
+.notification-icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, rgba(13, 110, 253, 0.2) 0%, rgba(13, 110, 253, 0.05) 100%);
+  color: var(--primary);
+}
+
+.notification-primary .notification-icon {
+  background: linear-gradient(135deg, rgba(13, 110, 253, 0.2) 0%, rgba(13, 110, 253, 0.05) 100%);
+  color: #0d6efd;
+}
+
+.notification-warning .notification-icon {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.2) 0%, rgba(255, 193, 7, 0.05) 100%);
+  color: #ffc107;
+}
+
+.notification-info .notification-icon {
+  background: linear-gradient(135deg, rgba(13, 202, 240, 0.2) 0%, rgba(13, 202, 240, 0.05) 100%);
+  color: #0dcaf0;
+}
+
+.notification-secondary .notification-icon {
+  background: linear-gradient(135deg, rgba(108, 117, 125, 0.2) 0%, rgba(108, 117, 125, 0.05) 100%);
+  color: #6c757d;
+}
+
+.notification-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-header-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.notification-header-item h6 {
+  margin: 0;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.95rem;
+  flex: 1;
+}
+
+.notification-header-item small {
+  color: var(--text-secondary);
+  white-space: nowrap;
+  font-size: 0.75rem;
+}
+
+.notification-message {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.notification-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.75rem;
+  gap: 0.5rem;
+}
+
+.notification-footer .badge {
+  text-transform: capitalize;
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+}
+
+.notification-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.notification-actions .btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  text-decoration: none;
+}
+
+.notification-actions .btn:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .notifications-overlay {
+    padding-top: 60px;
+  }
+
+  .notifications-panel {
+    width: 95%;
+    max-height: 85vh;
+  }
+
+  .notification-item {
+    padding: 0.875rem;
+  }
+
+  .notification-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+  }
+}
+
+/* Estilos del Modal de Respuesta */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  z-index: 10000;
+}
+
+.modal-respuesta {
+  background: var(--bg-primary);
+  border-radius: 16px;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header-respuesta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.5rem;
+  border-bottom: 2px solid var(--border-color);
+  background: linear-gradient(135deg, var(--primary) 0%, #0056b3 100%);
+  border-radius: 16px 16px 0 0;
+  color: white;
+}
+
+.modal-header-respuesta h5 {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.modal-header-respuesta small {
+  opacity: 0.9;
+  display: block;
+  margin-top: 0.25rem;
+}
+
+.modal-header-respuesta .btn-close {
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+}
+
+.modal-header-respuesta .btn-close:hover {
+  opacity: 1;
+}
+
+.modal-body-respuesta {
+  padding: 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-body-respuesta .alert {
+  border-radius: 8px;
+  border: none;
+}
+
+.modal-body-respuesta .form-control {
+  border-radius: 8px;
+  border: 2px solid var(--border-color);
+  padding: 0.75rem;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  resize: vertical;
+}
+
+.modal-body-respuesta .form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+
+.modal-body-respuesta .btn {
+  border-radius: 8px;
+  padding: 0.625rem 1.25rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.modal-body-respuesta .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.modal-body-respuesta .btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 768px) {
+  .modal-respuesta {
+    width: 95%;
+    max-height: 95vh;
+  }
+
+  .modal-header-respuesta,
+  .modal-body-respuesta {
+    padding: 1rem;
   }
 }
 </style>

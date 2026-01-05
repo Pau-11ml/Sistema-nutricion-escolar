@@ -1,19 +1,19 @@
 <template>
-  <div class="nutricionistas-view">
+  <div class="representantes-view">
     <!-- Encabezado -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
         <h1 class="h3 mb-1">
-          <i class="bi bi-clipboard2-pulse-fill me-2"></i>
-          {{ $t("admin.nutricionistas.titulo") }}
+          <i class="bi bi-person-badge-fill me-2"></i>
+          Gestión de Representantes
         </h1>
         <p class="text-muted mb-0">
-          {{ $t("admin.nutricionistas.subtitulo") }}
+          Administra los representantes legales de los estudiantes
         </p>
       </div>
       <button class="btn btn-primary" @click="goToRegistro">
         <i class="bi bi-plus-circle me-2"></i>
-        {{ $t("admin.nutricionistas.nuevoNutricionista") }}
+        Nuevo Representante
       </button>
     </div>
 
@@ -25,8 +25,8 @@
             <i class="bi bi-person-check"></i>
           </div>
           <div class="stat-content">
-            <div class="stat-value">{{ totalNutricionistas }}</div>
-            <div class="stat-label">Total Nutricionistas</div>
+            <div class="stat-value">{{ totalRepresentantes }}</div>
+            <div class="stat-label">Total Representantes</div>
           </div>
         </div>
       </div>
@@ -36,7 +36,7 @@
             <i class="bi bi-check-circle"></i>
           </div>
           <div class="stat-content">
-            <div class="stat-value">{{ nutricionistasActivos }}</div>
+            <div class="stat-value">{{ representantesActivos }}</div>
             <div class="stat-label">Activos</div>
           </div>
         </div>
@@ -48,21 +48,21 @@
       <div class="card-body">
         <div class="row g-3">
           <div class="col-md-6">
-            <label for="buscarNutricionista" class="form-label">
+            <label for="buscarRepresentante" class="form-label">
               <i class="bi bi-search me-1"></i>
               Buscar
             </label>
             <input
-              id="buscarNutricionista"
-              v-model="searchTerm"
+              id="buscarRepresentante"
               type="text"
               class="form-control"
-              :placeholder="$t('admin.nutricionistas.buscarPlaceholder')"
+              placeholder="Buscar por nombre, apellidos, cédula o email..."
+              v-model="searchTerm"
             />
           </div>
           <div class="col-md-3">
             <label for="filtroEstado" class="form-label">Estado</label>
-            <select id="filtroEstado" v-model="filtroEstado" class="form-select">
+            <select id="filtroEstado" class="form-select" v-model="filtroEstado">
               <option value="">Todos</option>
               <option value="activo">Activo</option>
               <option value="inactivo">Inactivo</option>
@@ -71,7 +71,11 @@
           <div class="col-md-3">
             <div class="d-flex flex-column">
               <span class="form-label d-block">&nbsp;</span>
-              <button class="btn btn-outline-secondary w-100" @click="limpiarFiltros">
+              <button
+                class="btn btn-outline-secondary w-100"
+                @click="limpiarFiltros"
+                :disabled="!hayFiltrosActivos"
+              >
                 <i class="bi bi-x-circle me-1"></i>
                 Limpiar
               </button>
@@ -81,7 +85,7 @@
       </div>
     </div>
 
-    <!-- Tabla de nutricionistas -->
+    <!-- Tabla de representantes -->
     <div class="card">
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -96,7 +100,7 @@
             </button>
           </div>
           <div class="text-muted">
-            Mostrando {{ nutricionistasFiltrados.length }} de {{ nutricionistas.length }} nutricionistas
+            Mostrando {{ representantesFiltrados.length }} de {{ representantes.length }} representantes
           </div>
         </div>
 
@@ -104,17 +108,8 @@
           <table class="table table-hover align-middle">
             <thead>
               <tr>
-                <th>Foto</th>
-                <th class="sortable" @click="ordenarPor('nombres')">
-                  Nombres
-                  <i
-                    v-if="ordenColumna === 'nombres'"
-                    :class="ordenDireccion === 'asc' ? 'bi-sort-up' : 'bi-sort-down'"
-                    class="bi ms-1"
-                  ></i>
-                </th>
-                <th class="sortable" @click="ordenarPor('apellidos')">
-                  Apellidos
+                <th class="sortable" @click="ordenar('apellidos')">
+                  Apellidos y Nombres
                   <i
                     v-if="ordenColumna === 'apellidos'"
                     :class="ordenDireccion === 'asc' ? 'bi-sort-up' : 'bi-sort-down'"
@@ -122,59 +117,75 @@
                   ></i>
                 </th>
                 <th>Cédula</th>
-                <th>Email</th>
                 <th>Teléfono</th>
+                <th>Email</th>
+                <th>Usuario</th>
                 <th>Estado</th>
-                <th>Acciones</th>
+                <th class="text-center">Acciones</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="nutricionista in nutricionistasPaginados" :key="nutricionista.id">
+              <tr v-for="representante in representantesPaginados" :key="representante.id">
                 <td>
-                  <div class="avatar-sm">
-                    <img
-                      v-if="nutricionista.foto"
-                      :src="nutricionista.foto"
-                      :alt="nutricionista.nombres"
-                      class="rounded-circle"
-                    />
-                    <div v-else class="avatar-placeholder">
-                      {{ getIniciales(nutricionista.nombres, nutricionista.apellidos) }}
+                  <div class="d-flex align-items-center">
+                    <div
+                      class="avatar-circle me-2"
+                      :style="{ backgroundColor: getAvatarColor(representante.id) }"
+                    >
+                      {{ getInitials(representante) }}
+                    </div>
+                    <div>
+                      <strong>{{ representante.apellidos }}, {{ representante.nombres }}</strong>
                     </div>
                   </div>
                 </td>
-                <td>{{ nutricionista.nombres }}</td>
-                <td>{{ nutricionista.apellidos }}</td>
-                <td>{{ nutricionista.cedula }}</td>
-                <td>{{ nutricionista.email }}</td>
-                <td>{{ nutricionista.telefono }}</td>
+                <td>{{ representante.cedula }}</td>
+                <td>
+                  <i class="bi bi-telephone me-1"></i>
+                  {{ representante.telefono }}
+                </td>
+                <td>
+                  <i class="bi bi-envelope me-1"></i>
+                  {{ representante.email }}
+                </td>
+                <td>
+                  <code>{{ representante.username }}</code>
+                </td>
                 <td>
                   <span
                     :class="[
                       'badge',
-                      nutricionista.estado === 'activo' ? 'bg-success' : 'bg-secondary'
+                      representante.estado === 'activo' ? 'bg-success' : 'bg-secondary'
                     ]"
                   >
-                    {{ nutricionista.estado }}
+                    {{ representante.estado }}
                   </span>
                 </td>
                 <td>
                   <div class="btn-group btn-group-sm">
                     <button
                       class="btn btn-outline-info"
-                      :title="$t('admin.nutricionistas.ver')"
-                      @click="verNutricionista(nutricionista)"
+                      @click="verDetalle(representante)"
+                      title="Ver detalles"
                     >
                       <i class="bi bi-eye"></i>
                     </button>
                     <button
                       class="btn btn-outline-danger"
-                      :title="$t('admin.nutricionistas.eliminar')"
-                      @click="confirmarEliminar(nutricionista)"
+                      @click="confirmarEliminar(representante)"
+                      title="Eliminar"
                     >
                       <i class="bi bi-trash"></i>
                     </button>
                   </div>
+                </td>
+              </tr>
+
+              <!-- Empty state -->
+              <tr v-if="representantesFiltrados.length === 0">
+                <td colspan="7" class="text-center text-muted py-4">
+                  <i class="bi bi-inbox display-4 d-block mb-2"></i>
+                  No se encontraron representantes
                 </td>
               </tr>
             </tbody>
@@ -182,7 +193,10 @@
         </div>
 
         <!-- Paginación -->
-        <div class="d-flex justify-content-between align-items-center mt-3">
+        <div
+          v-if="totalPaginas > 1"
+          class="d-flex justify-content-between align-items-center mt-3"
+        >
           <div>
             <select v-model="itemsPorPagina" class="form-select form-select-sm" style="width: auto">
               <option :value="10">10 por página</option>
@@ -212,10 +226,10 @@
       </div>
     </div>
 
-    <!-- Modal Ver/Editar Nutricionista -->
+    <!-- Modal Ver/Editar Representante -->
     <Teleport to="body">
       <div
-        v-if="nutricionistaSeleccionado"
+        v-if="representanteSeleccionado"
         class="modal fade show d-block"
         tabindex="-1"
         @click.self="cerrarModal"
@@ -224,73 +238,68 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">
-                <i class="bi bi-person-circle me-2"></i>
-                {{ modoEdicion ? 'Editar Nutricionista' : 'Información del Nutricionista' }}
+                <i class="bi bi-person-badge me-2"></i>
+                {{ modoEdicion ? 'Editar Representante' : 'Información del Representante' }}
               </h5>
               <button type="button" class="btn-close" @click="cerrarModal"></button>
             </div>
             <div class="modal-body">
               <div class="row">
                 <div class="col-md-4 text-center mb-3">
-                  <div v-if="nutricionistaEditado.foto" class="avatar-lg mx-auto mb-3">
-                    <img
-                      :src="nutricionistaEditado.foto"
-                      :alt="nutricionistaEditado.nombres"
-                      class="rounded-circle w-100"
-                    />
+                  <div class="avatar-lg avatar-placeholder mx-auto mb-3">
+                    {{ getInitials(representanteEditado) }}
                   </div>
-                  <div v-else class="avatar-lg avatar-placeholder mx-auto mb-3">
-                    {{ getIniciales(nutricionistaEditado.nombres, nutricionistaEditado.apellidos) }}
-                  </div>
-                  
+
                   <!-- Modo Vista -->
                   <template v-if="!modoEdicion">
-                    <h5>{{ nutricionistaEditado.nombres }} {{ nutricionistaEditado.apellidos }}</h5>
+                    <h5>{{ representanteEditado.nombres }} {{ representanteEditado.apellidos }}</h5>
                     <span
                       class="badge"
-                      :class="nutricionistaEditado.estado === 'activo' ? 'bg-success' : 'bg-secondary'"
+                      :class="representanteEditado.estado === 'activo' ? 'bg-success' : 'bg-secondary'"
                     >
-                      {{ nutricionistaEditado.estado }}
+                      {{ representanteEditado.estado }}
                     </span>
                   </template>
-                  
+
                   <!-- Modo Edición -->
                   <template v-else>
                     <div class="mb-2">
                       <label class="form-label small">Estado</label>
-                      <select v-model="nutricionistaEditado.estado" class="form-select form-select-sm">
+                      <select v-model="representanteEditado.estado" class="form-select form-select-sm">
                         <option value="activo">Activo</option>
                         <option value="inactivo">Inactivo</option>
                       </select>
                     </div>
                   </template>
                 </div>
-                
+
                 <div class="col-md-8">
                   <!-- Modo Vista -->
                   <template v-if="!modoEdicion">
                     <h6 class="border-bottom pb-2 mb-3">Información Personal</h6>
                     <dl class="row">
                       <dt class="col-sm-4">Nombres:</dt>
-                      <dd class="col-sm-8">{{ nutricionistaEditado.nombres }}</dd>
+                      <dd class="col-sm-8">{{ representanteEditado.nombres }}</dd>
 
                       <dt class="col-sm-4">Apellidos:</dt>
-                      <dd class="col-sm-8">{{ nutricionistaEditado.apellidos }}</dd>
+                      <dd class="col-sm-8">{{ representanteEditado.apellidos }}</dd>
 
                       <dt class="col-sm-4">Cédula:</dt>
-                      <dd class="col-sm-8">{{ nutricionistaEditado.cedula }}</dd>
+                      <dd class="col-sm-8">{{ representanteEditado.cedula }}</dd>
 
                       <dt class="col-sm-4">Teléfono:</dt>
-                      <dd class="col-sm-8">{{ nutricionistaEditado.telefono }}</dd>
+                      <dd class="col-sm-8">{{ representanteEditado.telefono }}</dd>
 
                       <dt class="col-sm-4">Email:</dt>
-                      <dd class="col-sm-8">{{ nutricionistaEditado.email }}</dd>
+                      <dd class="col-sm-8">{{ representanteEditado.email }}</dd>
                     </dl>
 
                     <h6 class="border-bottom pb-2 mb-3">Credenciales de Acceso</h6>
                     <dl class="row">
                       <dt class="col-sm-4">Usuario:</dt>
-                      <dd class="col-sm-8">{{ nutricionistaEditado.usuario || 'No definido' }}</dd>
+                      <dd class="col-sm-8">
+                        <code>{{ representanteEditado.username }}</code>
+                      </dd>
 
                       <dt class="col-sm-4">Contraseña:</dt>
                       <dd class="col-sm-8">••••••••</dd>
@@ -308,7 +317,7 @@
                       <div class="col-md-6">
                         <label class="form-label">Nombres</label>
                         <input
-                          v-model="nutricionistaEditado.nombres"
+                          v-model="representanteEditado.nombres"
                           type="text"
                           class="form-control"
                           required
@@ -317,7 +326,7 @@
                       <div class="col-md-6">
                         <label class="form-label">Apellidos</label>
                         <input
-                          v-model="nutricionistaEditado.apellidos"
+                          v-model="representanteEditado.apellidos"
                           type="text"
                           class="form-control"
                           required
@@ -326,7 +335,7 @@
                       <div class="col-md-6">
                         <label class="form-label">Cédula</label>
                         <input
-                          v-model="nutricionistaEditado.cedula"
+                          v-model="representanteEditado.cedula"
                           type="text"
                           class="form-control"
                           required
@@ -335,7 +344,7 @@
                       <div class="col-md-6">
                         <label class="form-label">Teléfono</label>
                         <input
-                          v-model="nutricionistaEditado.telefono"
+                          v-model="representanteEditado.telefono"
                           type="tel"
                           class="form-control"
                           required
@@ -344,7 +353,7 @@
                       <div class="col-md-12">
                         <label class="form-label">Email</label>
                         <input
-                          v-model="nutricionistaEditado.email"
+                          v-model="representanteEditado.email"
                           type="email"
                           class="form-control"
                           required
@@ -361,7 +370,7 @@
                       <div class="col-md-12">
                         <label class="form-label">Usuario</label>
                         <input
-                          v-model="nutricionistaEditado.usuario"
+                          v-model="representanteEditado.username"
                           type="text"
                           class="form-control"
                           required
@@ -370,7 +379,7 @@
                       <div class="col-md-12">
                         <label class="form-label">Contraseña</label>
                         <input
-                          v-model="nutricionistaEditado.password"
+                          v-model="representanteEditado.password"
                           type="password"
                           class="form-control"
                           placeholder="Mínimo 8 caracteres, incluya mayúsculas, minúsculas y números"
@@ -401,13 +410,13 @@
           </div>
         </div>
       </div>
-      <div v-if="nutricionistaSeleccionado" class="modal-backdrop fade show"></div>
+      <div v-if="representanteSeleccionado" class="modal-backdrop fade show"></div>
     </Teleport>
 
-    <!-- Modal Confirmar Eliminar -->
+    <!-- Modal de confirmación de eliminación -->
     <Teleport to="body">
       <div
-        v-if="nutricionistaAEliminar"
+        v-if="representanteAEliminar"
         class="modal fade show d-block"
         tabindex="-1"
         @click.self="cancelarEliminar"
@@ -426,11 +435,11 @@
               ></button>
             </div>
             <div class="modal-body">
-              <p>¿Está seguro que desea eliminar al nutricionista?</p>
+              <p>¿Está seguro que desea eliminar al representante?</p>
               <div class="alert alert-warning">
-                <strong>{{ nutricionistaAEliminar.nombres }} {{ nutricionistaAEliminar.apellidos }}</strong>
+                <strong>{{ representanteAEliminar.nombres }} {{ representanteAEliminar.apellidos }}</strong>
                 <br />
-                Cédula: {{ nutricionistaAEliminar.cedula }}
+                Cédula: {{ representanteAEliminar.cedula }}
               </div>
               <p class="text-muted mb-0">
                 <small>Esta acción no se puede deshacer.</small>
@@ -438,15 +447,14 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" @click="cancelarEliminar">Cancelar</button>
-              <button type="button" class="btn btn-danger" @click="eliminarNutricionista">
-                <i class="bi bi-trash me-1"></i>
-                Eliminar
+              <button type="button" class="btn btn-danger" @click="eliminarRepresentante">
+                <i class="bi bi-trash me-1"></i>Eliminar
               </button>
             </div>
           </div>
         </div>
       </div>
-      <div v-if="nutricionistaAEliminar" class="modal-backdrop fade show"></div>
+      <div v-if="representanteAEliminar" class="modal-backdrop fade show"></div>
     </Teleport>
   </div>
 </template>
@@ -455,17 +463,17 @@
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useNotificationStore } from "@/stores/notification";
-import { useNutritionistsStore } from "@/stores/nutritionists";
+import { useRepresentativesStore } from "@/stores/representatives";
 
 const router = useRouter();
 const notificationStore = useNotificationStore();
-const nutritionistsStore = useNutritionistsStore();
+const representativesStore = useRepresentativesStore();
 
-// Obtener nutricionistas del store con estado por defecto
-const nutricionistas = computed(() => 
-  nutritionistsStore.allNutritionists.map(n => ({
-    ...n,
-    estado: n.estado || 'activo'
+// Obtener representantes del store con estado por defecto
+const representantes = computed(() =>
+  representativesStore.allRepresentatives.map((r) => ({
+    ...r,
+    estado: r.estado || "activo",
   }))
 );
 
@@ -482,38 +490,54 @@ const paginaActual = ref(1);
 const itemsPorPagina = ref(10);
 
 // Modales
-const nutricionistaSeleccionado = ref(null);
-const nutricionistaAEliminar = ref(null);
+const representanteSeleccionado = ref(null);
+const representanteAEliminar = ref(null);
 const modoEdicion = ref(false);
-const nutricionistaEditado = ref({});
-const nutricionistaOriginal = ref({});
+const representanteEditado = ref({});
+const representanteOriginal = ref({});
 
 // Estadísticas
-const totalNutricionistas = computed(() => nutricionistas.value.length);
+const totalRepresentantes = computed(() => representantes.value.length);
 
-const nutricionistasActivos = computed(() =>
-  nutricionistas.value.filter((n) => n.estado === "activo").length
+const representantesActivos = computed(
+  () => representantes.value.filter((r) => r.estado === "activo").length
 );
 
+// Verificar si hay filtros activos
+const hayFiltrosActivos = computed(() => {
+  return searchTerm.value !== "" || filtroEstado.value !== "";
+});
+
+// Función para limpiar filtros
+function limpiarFiltros() {
+  searchTerm.value = "";
+  filtroEstado.value = "";
+  paginaActual.value = 1;
+  notificationStore.addNotification({
+    type: "info",
+    message: "Filtros limpiados",
+  });
+}
+
 // Filtrado
-const nutricionistasFiltrados = computed(() => {
-  let resultado = nutricionistas.value;
+const representantesFiltrados = computed(() => {
+  let resultado = representantes.value;
 
   // Filtro de búsqueda
   if (searchTerm.value) {
     const termino = searchTerm.value.toLowerCase();
     resultado = resultado.filter(
-      (n) =>
-        n.nombres.toLowerCase().includes(termino) ||
-        n.apellidos.toLowerCase().includes(termino) ||
-        n.cedula.includes(termino) ||
-        n.email.toLowerCase().includes(termino)
+      (r) =>
+        r.nombres.toLowerCase().includes(termino) ||
+        r.apellidos.toLowerCase().includes(termino) ||
+        r.cedula.includes(termino) ||
+        r.email.toLowerCase().includes(termino)
     );
   }
 
   // Filtro por estado
   if (filtroEstado.value) {
-    resultado = resultado.filter((n) => n.estado === filtroEstado.value);
+    resultado = resultado.filter((r) => r.estado === filtroEstado.value);
   }
 
   // Ordenamiento
@@ -537,20 +561,20 @@ const nutricionistasFiltrados = computed(() => {
 
 // Paginación
 const totalPaginas = computed(() =>
-  Math.ceil(nutricionistasFiltrados.value.length / itemsPorPagina.value)
+  Math.ceil(representantesFiltrados.value.length / itemsPorPagina.value)
 );
 
-const nutricionistasPaginados = computed(() => {
+const representantesPaginados = computed(() => {
   const inicio = (paginaActual.value - 1) * itemsPorPagina.value;
   const fin = inicio + itemsPorPagina.value;
-  return nutricionistasFiltrados.value.slice(inicio, fin);
+  return representantesFiltrados.value.slice(inicio, fin);
 });
 
 const paginasVisibles = computed(() => {
   const paginas = [];
   const maxPaginas = 5;
   let inicio = Math.max(1, paginaActual.value - Math.floor(maxPaginas / 2));
-  const fin = Math.min(totalPaginas.value, inicio + maxPaginas - 1);
+  let fin = Math.min(totalPaginas.value, inicio + maxPaginas - 1);
 
   if (fin - inicio < maxPaginas - 1) {
     inicio = Math.max(1, fin - maxPaginas + 1);
@@ -564,12 +588,7 @@ const paginasVisibles = computed(() => {
 });
 
 // Funciones
-function limpiarFiltros() {
-  searchTerm.value = "";
-  filtroEstado.value = "";
-}
-
-function ordenarPor(columna) {
+function ordenar(columna) {
   if (ordenColumna.value === columna) {
     ordenDireccion.value = ordenDireccion.value === "asc" ? "desc" : "asc";
   } else {
@@ -584,29 +603,37 @@ function cambiarPagina(pagina) {
   }
 }
 
-function getIniciales(nombres, apellidos) {
-  const inicialesNombre = nombres.split(" ")[0][0] || "";
-  const inicialesApellido = apellidos.split(" ")[0][0] || "";
-  return (inicialesNombre + inicialesApellido).toUpperCase();
+function getAvatarColor(id) {
+  const colors = [
+    "#6366f1",
+    "#8b5cf6",
+    "#ec4899",
+    "#f43f5e",
+    "#f97316",
+    "#eab308",
+    "#22c55e",
+    "#06b6d4",
+    "#3b82f6",
+    "#6366f1",
+  ];
+  return colors[id % colors.length];
 }
 
-function formatearFecha(fecha) {
-  const date = new Date(fecha);
-  return date.toLocaleDateString("es-ES", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+function getInitials(representante) {
+  return (
+    representante.nombres.charAt(0).toUpperCase() +
+    representante.apellidos.charAt(0).toUpperCase()
+  );
 }
 
 function goToRegistro() {
-  router.push({ name: "admin-registro-nutricionista" });
+  router.push({ name: "admin-registro-representante" });
 }
 
-function verNutricionista(nutricionista) {
-  nutricionistaSeleccionado.value = nutricionista;
-  nutricionistaEditado.value = { ...nutricionista };
-  nutricionistaOriginal.value = { ...nutricionista };
+function verDetalle(representante) {
+  representanteSeleccionado.value = representante;
+  representanteEditado.value = { ...representante };
+  representanteOriginal.value = { ...representante };
   modoEdicion.value = false;
 }
 
@@ -615,144 +642,100 @@ function activarModoEdicion() {
 }
 
 function cancelarEdicion() {
-  nutricionistaEditado.value = { ...nutricionistaOriginal.value };
+  representanteEditado.value = { ...representanteOriginal.value };
   modoEdicion.value = false;
 }
 
 function guardarEdicion() {
   // Validar campos requeridos
-  if (!nutricionistaEditado.value.nombres || !nutricionistaEditado.value.apellidos || 
-      !nutricionistaEditado.value.cedula || !nutricionistaEditado.value.email || 
-      !nutricionistaEditado.value.telefono || !nutricionistaEditado.value.usuario) {
+  if (
+    !representanteEditado.value.nombres ||
+    !representanteEditado.value.apellidos ||
+    !representanteEditado.value.cedula ||
+    !representanteEditado.value.email ||
+    !representanteEditado.value.telefono ||
+    !representanteEditado.value.username
+  ) {
     notificationStore.addNotification({
       type: "error",
-      message: "Por favor complete todos los campos requeridos"
+      message: "Por favor complete todos los campos requeridos",
     });
     return;
   }
 
   // Validar contraseña si se proporciona una nueva
-  if (nutricionistaEditado.value.password && nutricionistaEditado.value.password.length > 0) {
+  if (representanteEditado.value.password && representanteEditado.value.password.length > 0) {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
-    if (!passwordRegex.test(nutricionistaEditado.value.password)) {
+    if (!passwordRegex.test(representanteEditado.value.password)) {
       notificationStore.addNotification({
         type: "error",
-        message: "La contraseña debe tener mínimo 8 caracteres, incluir mayúsculas, minúsculas y números"
+        message: "La contraseña debe tener mínimo 8 caracteres, incluir mayúsculas, minúsculas y números",
       });
       return;
     }
   } else {
     // Si no se proporciona contraseña, eliminar el campo para no actualizarlo
-    delete nutricionistaEditado.value.password;
+    delete representanteEditado.value.password;
   }
 
   // Actualizar en el store
-  nutritionistsStore.updateNutritionist(nutricionistaEditado.value.id, nutricionistaEditado.value);
-  
+  representativesStore.updateRepresentative(
+    representanteEditado.value.id,
+    representanteEditado.value
+  );
+
   notificationStore.addNotification({
     type: "success",
-    message: "Nutricionista actualizado correctamente"
+    message: "Representante actualizado correctamente",
   });
-  
+
   modoEdicion.value = false;
-  nutricionistaOriginal.value = { ...nutricionistaEditado.value };
+  representanteOriginal.value = { ...representanteEditado.value };
 }
 
 function cerrarModal() {
-  nutricionistaSeleccionado.value = null;
-  nutricionistaEditado.value = {};
-  nutricionistaOriginal.value = {};
+  representanteSeleccionado.value = null;
+  representanteEditado.value = {};
+  representanteOriginal.value = {};
   modoEdicion.value = false;
 }
 
-function confirmarEliminar(nutricionista) {
-  nutricionistaAEliminar.value = nutricionista;
+function confirmarEliminar(representante) {
+  representanteAEliminar.value = representante;
 }
 
-function eliminarNutricionista() {
-  if (nutricionistaAEliminar.value) {
-    nutritionistsStore.deleteNutritionist(nutricionistaAEliminar.value.id);
+function eliminarRepresentante() {
+  if (representanteAEliminar.value) {
+    representativesStore.deleteRepresentative(representanteAEliminar.value.id);
     notificationStore.addNotification({
       type: "success",
-      message: "Nutricionista eliminado correctamente"
+      message: "Representante eliminado correctamente",
     });
   }
-  nutricionistaAEliminar.value = null;
+  representanteAEliminar.value = null;
 }
 
 function cancelarEliminar() {
-  nutricionistaAEliminar.value = null;
+  representanteAEliminar.value = null;
 }
 
 function exportarCSV() {
-  const headers = ['Nombres', 'Apellidos', 'Cédula', 'Teléfono', 'Email', 'Estado'];
-  const rows = nutricionistasFiltrados.value.map(n => [
-    n.nombres,
-    n.apellidos,
-    n.cedula,
-    n.telefono,
-    n.email,
-    n.estado
-  ]);
-  
-  let csvContent = headers.join(',') + '\n';
-  rows.forEach(row => {
-    csvContent += row.map(cell => `"${cell}"`).join(',') + '\n';
-  });
-  
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = `nutricionistas_${new Date().toISOString().split('T')[0]}.csv`;
-  link.click();
-  
   notificationStore.addNotification({
-    type: "success",
-    message: "CSV exportado correctamente",
+    type: "info",
+    message: "Exportando a CSV...",
   });
 }
 
 function exportarExcel() {
-  const headers = ['Nombres', 'Apellidos', 'Cédula', 'Teléfono', 'Email', 'Estado'];
-  const rows = nutricionistasFiltrados.value.map(n => [
-    n.nombres,
-    n.apellidos,
-    n.cedula,
-    n.telefono,
-    n.email,
-    n.estado
-  ]);
-  
-  let htmlTable = '<table border="1"><thead><tr>';
-  headers.forEach(h => {
-    htmlTable += `<th>${h}</th>`;
-  });
-  htmlTable += '</tr></thead><tbody>';
-  
-  rows.forEach(row => {
-    htmlTable += '<tr>';
-    row.forEach(cell => {
-      htmlTable += `<td>${cell}</td>`;
-    });
-    htmlTable += '</tr>';
-  });
-  htmlTable += '</tbody></table>';
-  
-  const blob = new Blob([htmlTable], { type: 'application/vnd.ms-excel' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = `nutricionistas_${new Date().toISOString().split('T')[0]}.xls`;
-  link.click();
-  
   notificationStore.addNotification({
-    type: "success",
-    message: "Excel exportado correctamente",
+    type: "info",
+    message: "Exportando a Excel...",
   });
 }
 </script>
 
 <style scoped>
-.nutricionistas-view {
+.representantes-view {
   padding: 0;
 }
 
@@ -801,12 +784,16 @@ function exportarExcel() {
   font-weight: 500;
 }
 
-.avatar-sm {
+.avatar-circle {
   width: 40px;
   height: 40px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
 }
 
 .avatar-lg {
@@ -820,11 +807,7 @@ function exportarExcel() {
 .avatar-placeholder {
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    135deg,
-    #667eea 0%,
-    #764ba2 100%
-  );
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -848,16 +831,8 @@ function exportarExcel() {
   background-color: rgba(0, 0, 0, 0.02);
 }
 
-.table-responsive {
-  overflow-x: auto;
-}
-
 .modal.show {
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-.modal-backdrop {
-  background-color: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.5);
 }
 
 .modal-content {
@@ -994,4 +969,64 @@ p {
 .text-muted {
   color: #6c757d !important;
 }
+
+/* Estilos para el offcanvas */
+.offcanvas {
+  position: fixed;
+  bottom: 0;
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  color: #212529;
+  visibility: hidden;
+  background-color: #fff;
+  background-clip: padding-box;
+  outline: 0;
+  transition: transform 0.3s ease-in-out;
+}
+
+.offcanvas.show {
+  transform: none;
+}
+
+.offcanvas-end {
+  top: 0;
+  right: 0;
+  border-left: 1px solid rgba(0, 0, 0, 0.2);
+  transform: translateX(100%);
+}
+
+.offcanvas-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+.offcanvas-title {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.offcanvas-body {
+  flex-grow: 1;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.offcanvas-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1040;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000;
+}
+
+.offcanvas-backdrop.show {
+  opacity: 0.5;
+}
+
 </style>

@@ -220,13 +220,90 @@
         </div>
       </div>
 
+      <!-- Información del Representante -->
+      <div class="card mb-4">
+        <div
+          class="card-header bg-info text-white"
+        >
+          <h5 class="mb-0">
+            <i
+              class="bi bi-person-badge me-2"
+            ></i>
+            Información del Representante
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label
+                for="representanteUsuario"
+                class="form-label required"
+              >
+                Usuario del Representante
+              </label>
+              <input
+                id="representanteUsuario"
+                v-model="formData.representanteUsuario"
+                type="text"
+                class="form-control"
+                :class="{
+                  'is-invalid': errors.representanteUsuario,
+                }"
+                required
+                placeholder="ej: representante"
+                @input="clearError('representanteUsuario')"
+              />
+              <div
+                v-if="errors.representanteUsuario"
+                class="invalid-feedback"
+              >
+                {{ errors.representanteUsuario }}
+              </div>
+              <small class="form-text text-muted">
+                Debe coincidir con el usuario de un representante registrado
+              </small>
+            </div>
+
+            <div class="col-md-6">
+              <label
+                for="representanteNombre"
+                class="form-label required"
+              >
+                Nombre del Representante
+              </label>
+              <input
+                id="representanteNombre"
+                v-model="formData.representanteNombre"
+                type="text"
+                class="form-control"
+                :class="{
+                  'is-invalid': errors.representanteNombre,
+                }"
+                required
+                placeholder="ej: María García"
+                @input="clearError('representanteNombre')"
+              />
+              <div
+                v-if="errors.representanteNombre"
+                class="invalid-feedback"
+              >
+                {{ errors.representanteNombre }}
+              </div>
+              <small class="form-text text-muted">
+                Nombre completo del representante
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Información Académica -->
       <div class="card mb-4">
         <div
           class="card-header bg-success text-white"
         >
           <h5 class="mb-0">
-            <i class="bi bi-mortarboard me-2"></i>
+            <i class="bi bi-book me-2"></i>
             Información Académica
           </h5>
         </div>
@@ -249,8 +326,12 @@
                 required
                 @change="clearError('grado')"
               >
-                <option value="">
-                  Seleccione...
+                <option
+                  value=""
+                  disabled
+                  selected
+                >
+                  Seleccione el grado
                 </option>
                 <option
                   v-for="grado in grados"
@@ -270,76 +351,41 @@
 
             <div class="col-md-4">
               <label
-                for="paralelo"
+                for="seccion"
                 class="form-label required"
               >
-                Paralelo
+                Sección
               </label>
               <select
-                id="paralelo"
-                v-model="formData.paralelo"
+                id="seccion"
+                v-model="formData.seccion"
                 class="form-select"
                 :class="{
-                  'is-invalid': errors.paralelo,
+                  'is-invalid': errors.seccion,
                 }"
                 required
-                @change="clearError('paralelo')"
+                @change="clearError('seccion')"
               >
-                <option value="">
-                  Seleccione...
+                <option
+                  value=""
+                  disabled
+                  selected
+                >
+                  Seleccione la sección
                 </option>
                 <option
-                  v-for="paralelo in paralelos"
-                  :key="paralelo"
-                  :value="paralelo"
+                  v-for="seccion in paralelos"
+                  :key="seccion"
+                  :value="seccion"
                 >
-                  {{ paralelo }}
+                  {{ seccion }}
                 </option>
               </select>
               <div
-                v-if="errors.paralelo"
+                v-if="errors.seccion"
                 class="invalid-feedback"
               >
-                {{ errors.paralelo }}
-              </div>
-            </div>
-
-            <div class="col-md-4">
-              <label
-                for="anioLectivo"
-                class="form-label required"
-              >
-                Año Lectivo
-              </label>
-              <select
-                id="anioLectivo"
-                v-model="formData.anioLectivo"
-                class="form-select"
-                :class="{
-                  'is-invalid':
-                    errors.anioLectivo,
-                }"
-                required
-                @change="
-                  clearError('anioLectivo')
-                "
-              >
-                <option value="">
-                  Seleccione...
-                </option>
-                <option
-                  v-for="anio in aniosLectivos"
-                  :key="anio"
-                  :value="anio"
-                >
-                  {{ anio }}
-                </option>
-              </select>
-              <div
-                v-if="errors.anioLectivo"
-                class="invalid-feedback"
-              >
-                {{ errors.anioLectivo }}
+                {{ errors.seccion }}
               </div>
             </div>
           </div>
@@ -358,282 +404,130 @@
         </div>
         <div class="card-body">
           <div class="row g-3">
-            <div class="col-md-12">
-              <label for="alergias" class="form-label">
-                <i
-                  class="bi bi-exclamation-triangle me-1"
-                ></i>
-                Alergias Alimentarias
+            <div class="col-md-3">
+              <label
+                for="peso"
+                class="form-label required"
+              >
+                Peso (kg)
               </label>
-              <div class="mb-2">
-                <div
-                  v-for="(
-                    alergia, index
-                  ) in formData.alergias"
-                  :key="index"
-                  class="badge bg-warning text-dark me-2 mb-2"
-                >
-                  {{ alergia }}
-                  <button
-                    type="button"
-                    class="btn-close btn-close-sm ms-2"
-                    @click="
-                      eliminarAlergia(index)
-                    "
-                  ></button>
-                </div>
+              <input
+                id="peso"
+                v-model.number="formData.peso"
+                type="number"
+                step="0.1"
+                class="form-control"
+                :class="{
+                  'is-invalid': errors.peso,
+                }"
+                required
+                @input="clearError('peso')"
+              />
+              <div
+                v-if="errors.peso"
+                class="invalid-feedback"
+              >
+                {{ errors.peso }}
               </div>
-              <div class="input-group">
-                <input
-                  id="alergias"
-                  v-model="nuevaAlergia"
-                  type="text"
-                  class="form-control"
-                  placeholder="Agregar alergia..."
-                  @keyup.enter="agregarAlergia"
-                />
-                <button
-                  type="button"
-                  class="btn btn-outline-warning"
-                  @click="agregarAlergia"
-                >
-                  <i
-                    class="bi bi-plus-circle"
-                  ></i>
-                  Agregar
-                </button>
+            </div>
+
+            <div class="col-md-3">
+              <label
+                for="altura"
+                class="form-label required"
+              >
+                Altura (cm)
+              </label>
+              <input
+                id="altura"
+                v-model.number="formData.altura"
+                type="number"
+                step="0.1"
+                class="form-control"
+                :class="{
+                  'is-invalid': errors.altura,
+                }"
+                required
+                @input="clearError('altura')"
+              />
+              <div
+                v-if="errors.altura"
+                class="invalid-feedback"
+              >
+                {{ errors.altura }}
               </div>
+            </div>
+
+            <div class="col-md-3">
+              <label
+                for="grupoSanguineo"
+                class="form-label required"
+              >
+                Grupo Sanguíneo
+              </label>
+              <select
+                id="grupoSanguineo"
+                v-model="formData.grupoSanguineo"
+                class="form-select"
+                :class="{
+                  'is-invalid': errors.grupoSanguineo,
+                }"
+                required
+                @change="clearError('grupoSanguineo')"
+              >
+                <option value="" disabled selected>
+                  Seleccione
+                </option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+              </select>
+              <div
+                v-if="errors.grupoSanguineo"
+                class="invalid-feedback"
+              >
+                {{ errors.grupoSanguineo }}
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <label
+                for="alergias"
+                class="form-label"
+              >
+                Alergias
+              </label>
+              <input
+                id="alergias"
+                v-model="formData.alergias"
+                type="text"
+                class="form-control"
+                placeholder="ej: Maní, Lactosa, Gluten (separadas por comas)"
+              />
               <small class="form-text text-muted">
-                Presione Enter o haga clic en
-                Agregar para añadir una alergia
+                Ingrese las alergias separadas por comas
               </small>
             </div>
 
             <div class="col-md-12">
               <label
-                for="observaciones"
+                for="condicionesMedicas"
                 class="form-label"
               >
-                Observaciones Médicas
+                Condiciones Médicas
               </label>
               <textarea
-                id="observaciones"
-                v-model="formData.observaciones"
+                id="condicionesMedicas"
+                v-model="formData.condicionesMedicas"
                 class="form-control"
                 rows="3"
-                placeholder="Ingrese cualquier observación médica relevante..."
+                placeholder="Ingrese cualquier condición médica relevante..."
               ></textarea>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Información del Representante -->
-      <div class="card mb-4">
-        <div
-          class="card-header bg-info text-white"
-        >
-          <h5 class="mb-0">
-            <i
-              class="bi bi-person-badge me-2"
-            ></i>
-            Información del Representante
-          </h5>
-        </div>
-        <div class="card-body">
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label
-                for="representanteNombre"
-                class="form-label required"
-              >
-                Nombre Completo
-              </label>
-              <input
-                id="representanteNombre"
-                v-model="
-                  formData.representante.nombre
-                "
-                type="text"
-                class="form-control"
-                :class="{
-                  'is-invalid':
-                    errors.representanteNombre,
-                }"
-                required
-                @input="
-                  clearError(
-                    'representanteNombre'
-                  )
-                "
-              />
-              <div
-                v-if="errors.representanteNombre"
-                class="invalid-feedback"
-              >
-                {{ errors.representanteNombre }}
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <label
-                for="representanteCedula"
-                class="form-label required"
-              >
-                Cédula
-              </label>
-              <input
-                id="representanteCedula"
-                v-model="
-                  formData.representante.cedula
-                "
-                type="text"
-                class="form-control"
-                :class="{
-                  'is-invalid':
-                    errors.representanteCedula,
-                }"
-                maxlength="10"
-                required
-                @input="
-                  clearError(
-                    'representanteCedula'
-                  )
-                "
-              />
-              <div
-                v-if="errors.representanteCedula"
-                class="invalid-feedback"
-              >
-                {{ errors.representanteCedula }}
-              </div>
-            </div>
-
-            <div class="col-md-4">
-              <label
-                for="representanteTelefono"
-                class="form-label required"
-              >
-                Teléfono
-              </label>
-              <input
-                id="representanteTelefono"
-                v-model="
-                  formData.representante.telefono
-                "
-                type="tel"
-                class="form-control"
-                :class="{
-                  'is-invalid':
-                    errors.representanteTelefono,
-                }"
-                maxlength="10"
-                required
-                @input="
-                  clearError(
-                    'representanteTelefono'
-                  )
-                "
-              />
-              <div
-                v-if="
-                  errors.representanteTelefono
-                "
-                class="invalid-feedback"
-              >
-                {{ errors.representanteTelefono }}
-              </div>
-            </div>
-
-            <div class="col-md-4">
-              <label
-                for="representanteEmail"
-                class="form-label required"
-              >
-                Email
-              </label>
-              <input
-                id="representanteEmail"
-                v-model="
-                  formData.representante.email
-                "
-                type="email"
-                class="form-control"
-                :class="{
-                  'is-invalid':
-                    errors.representanteEmail,
-                }"
-                required
-                @input="
-                  clearError('representanteEmail')
-                "
-              />
-              <div
-                v-if="errors.representanteEmail"
-                class="invalid-feedback"
-              >
-                {{ errors.representanteEmail }}
-              </div>
-            </div>
-
-            <div class="col-md-4">
-              <label
-                for="representanteParentesco"
-                class="form-label required"
-              >
-                Parentesco
-              </label>
-              <select
-                id="representanteParentesco"
-                v-model="
-                  formData.representante
-                    .parentesco
-                "
-                class="form-select"
-                :class="{
-                  'is-invalid':
-                    errors.representanteParentesco,
-                }"
-                required
-                @change="
-                  clearError(
-                    'representanteParentesco'
-                  )
-                "
-              >
-                <option value="">
-                  Seleccione...
-                </option>
-                <option value="Padre">
-                  Padre
-                </option>
-                <option value="Madre">
-                  Madre
-                </option>
-                <option value="Abuelo/a">
-                  Abuelo/a
-                </option>
-                <option value="Tío/a">
-                  Tío/a
-                </option>
-                <option value="Hermano/a">
-                  Hermano/a
-                </option>
-                <option value="Tutor legal">
-                  Tutor legal
-                </option>
-                <option value="Otro">Otro</option>
-              </select>
-              <div
-                v-if="
-                  errors.representanteParentesco
-                "
-                class="invalid-feedback"
-              >
-                {{
-                  errors.representanteParentesco
-                }}
-              </div>
             </div>
           </div>
         </div>
@@ -696,41 +590,37 @@
 import { ref, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useNotificationStore } from "@/stores/notification";
+import { useStudentsStore } from "@/stores/students";
 
 const router = useRouter();
 const route = useRoute();
 const notificationStore = useNotificationStore();
+const studentsStore = useStudentsStore();
 
 const modoEdicion = computed(
   () => !!route.params.id
 );
 const isLoading = ref(false);
 
-// Datos del formulario
+// Datos del formulario (igual al de representante + campos de representante)
 const formData = ref({
+  representanteUsuario: "",
+  representanteNombre: "",
   nombres: "",
   apellidos: "",
   cedula: "",
   fechaNacimiento: "",
-  genero: "",
-  direccion: "",
   grado: "",
-  paralelo: "",
-  anioLectivo: "",
-  alergias: [],
-  observaciones: "",
-  representante: {
-    nombre: "",
-    cedula: "",
-    telefono: "",
-    email: "",
-    parentesco: "",
-  },
+  seccion: "",
+  peso: "",
+  altura: "",
+  grupoSanguineo: "",
+  alergias: "",
+  condicionesMedicas: "",
   estado: "activo",
 });
 
 const errors = ref({});
-const nuevaAlergia = ref("");
 
 // Datos para selects
 const grados = [
@@ -787,36 +677,28 @@ function calcularEdad(fechaNacimiento) {
   return edad;
 }
 
-function agregarAlergia() {
-  if (nuevaAlergia.value.trim()) {
-    if (
-      !formData.value.alergias.includes(
-        nuevaAlergia.value.trim()
-      )
-    ) {
-      formData.value.alergias.push(
-        nuevaAlergia.value.trim()
-      );
-      nuevaAlergia.value = "";
-    }
-  }
-}
-
-function eliminarAlergia(index) {
-  formData.value.alergias.splice(index, 1);
-}
-
 function clearError(field) {
   if (errors.value[field]) {
     delete errors.value[field];
   }
 }
 
-function validarDatosPersonales() {
-  if (!formData.value.nombres.trim()) {
+function validarFormulario() {
+  errors.value = {};
+  
+  // Validar representante
+  if (!formData.value.representanteUsuario?.trim()) {
+    errors.value.representanteUsuario = "El usuario del representante es requerido";
+  }
+  if (!formData.value.representanteNombre?.trim()) {
+    errors.value.representanteNombre = "El nombre del representante es requerido";
+  }
+  
+  // Validar datos personales
+  if (!formData.value.nombres?.trim()) {
     errors.value.nombres = "Los nombres son requeridos";
   }
-  if (!formData.value.apellidos.trim()) {
+  if (!formData.value.apellidos?.trim()) {
     errors.value.apellidos = "Los apellidos son requeridos";
   }
   if (!formData.value.cedula) {
@@ -826,58 +708,32 @@ function validarDatosPersonales() {
   }
   if (formData.value.fechaNacimiento) {
     const edad = calcularEdad(formData.value.fechaNacimiento);
-    if (edad < 5 || edad > 18) {
-      errors.value.fechaNacimiento = "La edad debe estar entre 5 y 18 años";
+    if (edad < 4 || edad > 15) {
+      errors.value.fechaNacimiento = "El estudiante debe tener entre 4 y 15 años para el programa de nutrición escolar";
     }
   } else {
     errors.value.fechaNacimiento = "La fecha de nacimiento es requerida";
   }
-  if (!formData.value.genero) {
-    errors.value.genero = "El género es requerido";
-  }
-}
-
-function validarDatosAcademicos() {
+  
+  // Validar datos académicos
   if (!formData.value.grado) {
     errors.value.grado = "El grado es requerido";
   }
-  if (!formData.value.paralelo) {
-    errors.value.paralelo = "El paralelo es requerido";
+  if (!formData.value.seccion) {
+    errors.value.seccion = "La sección es requerida";
   }
-  if (!formData.value.anioLectivo) {
-    errors.value.anioLectivo = "El año lectivo es requerido";
+  
+  // Validar datos de salud
+  if (!formData.value.peso) {
+    errors.value.peso = "El peso es requerido";
   }
-}
-
-function validarRepresentante() {
-  if (!formData.value.representante.nombre.trim()) {
-    errors.value.representanteNombre = "El nombre del representante es requerido";
+  if (!formData.value.altura) {
+    errors.value.altura = "La altura es requerida";
   }
-  if (!formData.value.representante.cedula) {
-    errors.value.representanteCedula = "La cédula del representante es requerida";
-  } else if (formData.value.representante.cedula.length !== 10) {
-    errors.value.representanteCedula = "La cédula debe tener 10 dígitos";
+  if (!formData.value.grupoSanguineo) {
+    errors.value.grupoSanguineo = "El grupo sanguíneo es requerido";
   }
-  if (!formData.value.representante.telefono) {
-    errors.value.representanteTelefono = "El teléfono es requerido";
-  } else if (formData.value.representante.telefono.length < 9) {
-    errors.value.representanteTelefono = "El teléfono debe tener al menos 9 dígitos";
-  }
-  if (!formData.value.representante.email) {
-    errors.value.representanteEmail = "El email es requerido";
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.value.representante.email)) {
-    errors.value.representanteEmail = "El email no es válido";
-  }
-  if (!formData.value.representante.parentesco) {
-    errors.value.representanteParentesco = "El parentesco es requerido";
-  }
-}
-
-function validarFormulario() {
-  errors.value = {};
-  validarDatosPersonales();
-  validarDatosAcademicos();
-  validarRepresentante();
+  
   return Object.keys(errors.value).length === 0;
 }
 
@@ -894,24 +750,29 @@ async function handleSubmit() {
   isLoading.value = true;
 
   try {
-    // Simular llamada a API
-    await new Promise((resolve) =>
-      setTimeout(resolve, 1500)
+    // Extraer datos del representante
+    const { representanteUsuario, representanteNombre, ...datosEstudiante } = formData.value;
+    
+    if (!representanteUsuario || !representanteNombre) {
+      notificationStore.addNotification({
+        type: "error",
+        message: "Debe especificar el representante del estudiante",
+      });
+      isLoading.value = false;
+      return;
+    }
+
+    // Agregar estudiante con el representante especificado
+    studentsStore.addStudent(
+      datosEstudiante,
+      representanteUsuario,
+      representanteNombre
     );
 
-    if (modoEdicion.value) {
-      notificationStore.addNotification({
-        type: "success",
-        message:
-          "Estudiante actualizado correctamente",
-      });
-    } else {
-      notificationStore.addNotification({
-        type: "success",
-        message:
-          "Estudiante registrado correctamente",
-      });
-    }
+    notificationStore.addNotification({
+      type: "success",
+      message: `Estudiante registrado correctamente y asignado a ${representanteNombre}`,
+    });
 
     router.push({ name: "admin-estudiantes" });
   } catch (error) {
@@ -927,24 +788,19 @@ async function handleSubmit() {
 
 function limpiarFormulario() {
   formData.value = {
+    representanteUsuario: "",
+    representanteNombre: "",
     nombres: "",
     apellidos: "",
     cedula: "",
     fechaNacimiento: "",
-    genero: "",
-    direccion: "",
     grado: "",
-    paralelo: "",
-    anioLectivo: "",
-    alergias: [],
-    observaciones: "",
-    representante: {
-      nombre: "",
-      cedula: "",
-      telefono: "",
-      email: "",
-      parentesco: "",
-    },
+    seccion: "",
+    peso: "",
+    altura: "",
+    grupoSanguineo: "",
+    alergias: "",
+    condicionesMedicas: "",
     estado: "activo",
   };
   errors.value = {};
@@ -956,29 +812,8 @@ function volver() {
 
 // Cargar datos si es modo edición
 if (modoEdicion.value) {
-  // Simular carga de datos
-  formData.value = {
-    nombres: "Juan Carlos",
-    apellidos: "Pérez García",
-    cedula: "0123456789",
-    fechaNacimiento: "2015-05-15",
-    genero: "Masculino",
-    direccion: "Av. Principal 123",
-    grado: "3ro EGB",
-    paralelo: "A",
-    anioLectivo: "2024-2025",
-    alergias: ["Maní", "Lactosa"],
-    observaciones:
-      "Requiere atención especial en el comedor",
-    representante: {
-      nombre: "María García",
-      cedula: "0987654321",
-      telefono: "0987654321",
-      email: "maria.garcia@example.com",
-      parentesco: "Madre",
-    },
-    estado: "activo",
-  };
+  // TODO: Cargar datos reales desde el store cuando se implemente la edición
+  console.log("Modo edición - ID:", route.params.id);
 }
 </script>
 

@@ -37,6 +37,15 @@ const router = createRouter({
       meta: { requiresGuest: true },
     },
     {
+      path: "/verificar-email",
+      name: "verificar-email",
+      component: () =>
+        import(
+          "@/views/auth/VerificarEmailView.vue"
+        ),
+      meta: { requiresGuest: true },
+    },
+    {
       path: "/admin",
       component: () =>
         import("@/layouts/AdminLayout.vue"),
@@ -67,6 +76,14 @@ const router = createRouter({
             ),
         },
         {
+          path: "estudiantes/editar/:id",
+          name: "admin-editar-estudiante",
+          component: () =>
+            import(
+              "@/views/admin/RegistroEstudianteView.vue"
+            ),
+        },
+        {
           path: "nutricionistas",
           name: "admin-nutricionistas",
           component: () =>
@@ -80,6 +97,38 @@ const router = createRouter({
           component: () =>
             import(
               "@/views/admin/RegistroNutricionistaView.vue"
+            ),
+        },
+        {
+          path: "nutricionistas/editar/:id",
+          name: "admin-editar-nutricionista",
+          component: () =>
+            import(
+              "@/views/admin/RegistroNutricionistaView.vue"
+            ),
+        },
+        {
+          path: "representantes",
+          name: "admin-representantes",
+          component: () =>
+            import(
+              "@/views/admin/RepresentantesView.vue"
+            ),
+        },
+        {
+          path: "representantes/registro",
+          name: "admin-registro-representante",
+          component: () =>
+            import(
+              "@/views/admin/RegistroRepresentanteView.vue"
+            ),
+        },
+        {
+          path: "representantes/editar/:id",
+          name: "admin-editar-representante",
+          component: () =>
+            import(
+              "@/views/admin/RegistroRepresentanteView.vue"
             ),
         },
         {
@@ -125,6 +174,14 @@ const router = createRouter({
               "@/views/usuario/PerfilView.vue"
             ),
         },
+        {
+          path: "retroalimentacion",
+          name: "usuario-retroalimentacion",
+          component: () =>
+            import(
+              "@/views/usuario/RetroalimentacionView.vue"
+            ),
+        },
       ],
     },
     {
@@ -152,6 +209,31 @@ const router = createRouter({
           component: () =>
             import(
               "@/views/nutricionista/MenuSemanalView.vue"
+            ),
+        },
+        {
+          path: "comidas",
+          name: "nutricionista-comidas",
+          component: () =>
+            import(
+              "@/views/nutricionista/ComidasView.vue"
+            ),
+        },
+
+        {
+          path: "recomendaciones",
+          name: "nutricionista-recomendaciones",
+          component: () =>
+            import(
+              "@/views/nutricionista/RecomendacionesView.vue"
+            ),
+        },
+        {
+          path: "alertas",
+          name: "nutricionista-alertas",
+          component: () =>
+            import(
+              "@/views/nutricionista/AlertasView.vue"
             ),
         },
         {

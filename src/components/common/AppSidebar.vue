@@ -401,24 +401,10 @@ function handleShortcut(shortcut) {
 }
 
 function openContextualHelp() {
-  // Mostrar ayuda según la ruta actual
-  const helpMessages = {
-    "/admin":
-      "Panel principal donde puedes ver estadísticas y gestionar usuarios del sistema.",
-    "/admin/estudiantes":
-      "Gestiona los estudiantes registrados en el sistema.",
-    "/admin/nutricionistas":
-      "Gestiona los nutricionistas del sistema.",
-    "/admin/reportes":
-      "Consulta y genera reportes del sistema.",
-    "/admin/configuracion":
-      "Configura los parámetros del sistema.",
-  };
-
-  const message =
-    helpMessages[route.path] ||
-    "Ayuda no disponible para esta sección.";
-  alert(`Ayuda Contextual\n\n${message}`);
+  // Disparar evento para abrir el modal de ayuda contextual
+  globalThis.dispatchEvent(
+    new CustomEvent('app:open-help')
+  );
 }
 
 // Inicializar estado del sidebar desde localStorage

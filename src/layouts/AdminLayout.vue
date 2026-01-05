@@ -18,9 +18,9 @@
 
       <main class="main-content" role="main">
         <div class="container-fluid py-4">
-          <RouterView v-slot="{ Component }">
+          <RouterView v-slot="{ Component, route }">
             <Transition name="page" mode="out-in">
-              <component :is="Component" />
+              <component :is="Component" :key="route.path" />
             </Transition>
           </RouterView>
         </div>
@@ -28,6 +28,8 @@
     </div>
 
     <AppFooter />
+    <HelpButton />
+    <TextSelectionReader />
   </div>
 </template>
 
@@ -37,6 +39,8 @@ import { useRoute } from "vue-router";
 import AppHeader from "@/components/common/AppHeader.vue";
 import AppSidebar from "@/components/common/AppSidebar.vue";
 import AppFooter from "@/components/common/AppFooter.vue";
+import HelpButton from "@/components/common/HelpButton.vue";
+import TextSelectionReader from "@/components/common/TextSelectionReader.vue";
 
 const route = useRoute();
 const isSidebarExpanded = ref(true);
@@ -78,12 +82,30 @@ const adminMenuItems = [
     children: [
       {
         path: "/admin/nutricionistas",
-        label: "Lista de nutricionistas",
+        label: "admin.nutritionistList",
         icon: "bi-list-ul",
       },
       {
         path: "/admin/nutricionistas/registro",
-        label: "Registrar nutricionista",
+        label: "admin.registerNutritionist",
+        icon: "bi-person-plus",
+      },
+    ],
+  },
+  {
+    path: "/admin/representantes",
+    label: "Representantes",
+    icon: "bi-person-badge",
+    key: "representatives",
+    children: [
+      {
+        path: "/admin/representantes",
+        label: "Lista de Representantes",
+        icon: "bi-list-ul",
+      },
+      {
+        path: "/admin/representantes/registro",
+        label: "Registrar Representante",
         icon: "bi-person-plus",
       },
     ],
@@ -113,6 +135,10 @@ const currentPageTitle = computed(() => {
       "Gestión de Nutricionistas",
     "/admin/nutricionistas/registro":
       "Registro de Nutricionista",
+    "/admin/representantes":
+      "Gestión de Representantes",
+    "/admin/representantes/registro":
+      "Registro de Representante",
   };
   return titles[route.path] || "";
 });

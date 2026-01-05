@@ -47,9 +47,31 @@
     "recoverPasswordInfo": "Ingresa tu correo electrónico y te enviaremos instrucciones para recuperar tu contraseña",
     "passwordRecoverySent": "Se ha enviado un correo de recuperación",
     "registerSuccess": "Registro exitoso. Ya puedes iniciar sesión",
+    "registerError": "Error al crear la cuenta",
     "roleParent": "Representante",
     "passwordRequirements": "Mínimo 8 caracteres, incluye mayúsculas, minúsculas y números"
   },
+  "Nutricionista": "Nutricionista",
+  "Administrador": "Administrador",
+  "Rol de nutricionista escolar": "Gestiona menús y alimentación",
+  "Rol de representante estudiantil": "Representa a su estudiante",
+  "Rol de administrador": "Control total del sistema",
+  "Ej: Santiago José": "Ej: Santiago José",
+  "Ej: Santana Pacheco": "Ej: Santana Pacheco",
+  "Ej: jose_pacheco@gmail.com": "{'Ej: jose_pacheco@gmail.com'}",
+  "PachecoJ": "PachecoJ",
+  "Ingrese contraseña": "Ingrese contraseña",
+  "Confirmar contraseña": "Confirmar contraseña",
+  "Confirme contraseña": "Confirme contraseña",
+  "Aceptar nuestros": "Acepto los",
+  "y nuestra": "y la",
+  "Registrate": "Regístrate",
+  "Regresar al Inicio": "Regresar al Inicio",
+  "Selecciona tu Rol": "Selecciona tu Rol",
+  "Se requiere contraseña": "Se requiere contraseña",
+  "Se requiere confirmar contraseña": "Se requiere confirmar contraseña",
+  "Se requiere aceptar los terminos, condiciones y politicas de privacidad": "Debes aceptar los términos y políticas",
+  "Error al crear cuenta": "Error al crear cuenta",
   "nav": {
     "home": "Inicio",
     "profile": "Perfil",
@@ -125,7 +147,12 @@
     "delete": "Eliminar",
     "representant": "Representante",
     "nutritionist": "Nutricionista",
-    "admin": "Administrador"
+    "admin": "Administrador",
+    "nutricionistas": {
+      "titulo": "Gestión de Nutricionistas",
+      "subtitulo": "Administra el personal de nutrición del sistema",
+      "nuevoNutricionista": "Nuevo Nutricionista"
+    }
   },
   "accessibility": {
     "title": "Accesibilidad",
@@ -202,5 +229,15 @@
     "maxLength": "Debe tener máximo {max} caracteres",
     "passwordMismatch": "Las contraseñas no coinciden",
     "passwordMin": "La contraseña debe tener al menos 8 caracteres"
+  },
+  "help": {
+    "button": "Botón de ayuda",
+    "close": "Cerrar ayuda",
+    "understood": "Entendido"
+  },
+  "errors": {
+    "pageNotFound": "Página no encontrada",
+    "pageNotFoundMessage": "Lo sentimos, la página que buscas no existe o ha sido movida.",
+    "suggestions": "¿Qué te gustaría hacer?"
   }
 }

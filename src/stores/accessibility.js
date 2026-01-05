@@ -41,11 +41,27 @@ export const useAccessibilityStore = defineStore('accessibility', () => {
 
   function speak(text) {
     if (speechEnabled.value && 'speechSynthesis' in window) {
+      // Cancelar cualquier lectura en curso
+      speechSynthesis.cancel()
+      
       const utterance = new SpeechSynthesisUtterance(text)
       utterance.lang = 'es-ES'
       utterance.rate = 0.9
+      utterance.pitch = 1
+      utterance.volume = 1
       speechSynthesis.speak(utterance)
     }
+  }
+  
+  function speakSelection() {
+    if (speechEnabled.value && 'speechSynthesis' in window) {
+      const selectedText = window.getSelection().toString().trim()
+      if (selectedText) {
+        speak(selectedText)
+        return true
+      }
+    }
+    return false
   }
 
   function toggleVisualAlerts() {
@@ -65,6 +81,7 @@ export const useAccessibilityStore = defineStore('accessibility', () => {
     setTextSize,
     toggleSpeech,
     speak,
+    speakSelection,
     toggleVisualAlerts
   }
 })

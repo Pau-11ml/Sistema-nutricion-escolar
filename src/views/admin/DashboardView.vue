@@ -62,8 +62,15 @@
             <i class="bi bi-heart-pulse me-2"></i>
             {{ $t("admin.registerNutritionist") }}
           </router-link>
-          <button
+          <router-link
+            to="/admin/representantes/registro"
             class="btn btn-info"
+          >
+            <i class="bi bi-person-badge me-2"></i>
+            Registrar Representante
+          </router-link>
+          <button
+            class="btn btn-outline-secondary"
             @click="exportData"
           >
             <i
@@ -160,13 +167,6 @@
                     class="btn-group btn-group-sm"
                   >
                     <button
-                      class="btn btn-outline-primary"
-                      @click="editUser(user)"
-                      :title="$t('admin.edit')"
-                    >
-                      <i class="bi bi-pencil"></i>
-                    </button>
-                    <button
                       class="btn btn-outline-danger"
                       @click="deleteUser(user)"
                       :title="$t('admin.delete')"
@@ -192,7 +192,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useNotificationStore } from "@/stores/notification";
 
@@ -201,6 +201,7 @@ const notificationStore = useNotificationStore();
 
 const searchQuery = ref("");
 
+// Estadísticas
 const statistics = ref([
   {
     id: 1,
@@ -219,42 +220,40 @@ const statistics = ref([
   {
     id: 3,
     label: t("admin.totalUsers"),
-    value: 1,
+    value: 0,
     icon: "bi-person-check-fill",
     color: "info",
   },
-  {
-    id: 4,
-    label: t("admin.activeMenus"),
-    value: 0,
-    icon: "bi-calendar-week-fill",
-    color: "warning",
-  },
+
 ]);
 
-// Solo usuarios predeterminados del sistema
-// Los nuevos usuarios se agregarán mediante registro
-const users = ref([
-  {
-    id: 1,
-    name: "Administrador del Sistema",
-    username: "admin",
-    role: "admin",
-    cedula: "0000000000",
+// ✅ Lista de usuarios dinámicos (sin el admin fijo)
+const users = ref([]);
+
+// Cargar usuarios del localStorage
+onMounted(() => {
+  const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
+  users.value = storedUsers.map((u, i) => ({
+    id: i + 1,
+    name: `${u.nombres} ${u.apellidos}`,
+    username: u.username,
+    role: u.role,
+    cedula: u.cedula,
     active: true,
-  },
-]);
+  }));
+
+  // Actualizar estadísticas
+  statistics.value[1].value = users.value.filter(u => u.role === "nutricionista").length;
+  statistics.value[2].value = users.value.length;
+});
 
 const filteredUsers = computed(() => {
   if (!searchQuery.value) return users.value;
-
   const query = searchQuery.value.toLowerCase();
   return users.value.filter(
     (user) =>
       user.name.toLowerCase().includes(query) ||
-      user.username
-        .toLowerCase()
-        .includes(query) ||
+      user.username.toLowerCase().includes(query) ||
       user.role.toLowerCase().includes(query)
   );
 });
@@ -268,41 +267,23 @@ function getRoleBadgeClass(role) {
   return classes[role] || "bg-secondary";
 }
 
-function editUser(user) {
-  notificationStore.info(
-    `${t("admin.edit")}: ${user.name}`
-  );
-  // Implementar navegación a formulario de edición
-}
-
 function deleteUser(user) {
-  if (
-    confirm(
-      `${t("student.confirmDelete").replace(
-        "estudiante",
-        "usuario"
-      )}: ${user.name}?`
-    )
-  ) {
-    notificationStore.success(
-      `${t("common.success")}: ${user.name}`
-    );
-    // Implementar lógica de eliminación
+  if (confirm(`${t("student.confirmDelete").replace("estudiante", "usuario")}: ${user.name}?`)) {
+    users.value = users.value.filter(u => u.id !== user.id);
+    localStorage.setItem("users", JSON.stringify(users.value));
+    statistics.value[2].value = users.value.length;
+    notificationStore.success(`${t("common.success")}: ${user.name}`);
   }
 }
 
 function exportData() {
   try {
-    // Preparar datos para exportar
-    const exportDate =
-      new Date().toLocaleDateString("es-EC");
+    const exportDate = new Date().toLocaleDateString("es-EC");
     const data = {
       fecha_exportacion: exportDate,
       estadisticas: {
-        total_estudiantes:
-          statistics.value[0].value,
-        total_nutricionistas:
-          statistics.value[1].value,
+        total_estudiantes: statistics.value[0].value,
+        total_nutricionistas: statistics.value[1].value,
         total_usuarios: statistics.value[2].value,
         menus_activos: statistics.value[3].value,
       },
@@ -311,23 +292,11 @@ function exportData() {
         usuario: user.username,
         rol: user.role,
         cedula: user.cedula,
-        estado: user.active
-          ? "Activo"
-          : "Inactivo",
+        estado: user.active ? "Activo" : "Inactivo",
       })),
     };
 
-    // Convertir a JSON con formato legible
-    const jsonString = JSON.stringify(
-      data,
-      null,
-      2
-    );
-
-    // Crear blob y descargar
-    const blob = new Blob([jsonString], {
-      type: "application/json",
-    });
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
@@ -337,16 +306,13 @@ function exportData() {
     link.remove();
     URL.revokeObjectURL(url);
 
-    notificationStore.success(
-      "Datos exportados correctamente"
-    );
+    notificationStore.success("Datos exportados correctamente");
   } catch (error) {
-    notificationStore.error(
-      "Error al exportar datos: " + error.message
-    );
+    notificationStore.error("Error al exportar datos: " + error.message);
   }
 }
 </script>
+
 
 <style scoped>
 .stat-card {

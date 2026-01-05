@@ -494,8 +494,8 @@
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
-import { stringifyQuery, useRouter } from "vue-router";
+import { ref, reactive, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { useNotificationStore } from "@/stores/notification";
 import { useI18n } from "vue-i18n";
@@ -644,11 +644,6 @@ async function handleRegister() {
   isLoading.value = true;
 
   try {
-    // Simular registro (reemplazar con API real)
-    await new Promise((resolve) =>
-      setTimeout(resolve, 1500)
-    );
-
     const userData = {
       username: formData.username,
       email: formData.email,
@@ -660,25 +655,21 @@ async function handleRegister() {
       password: formData.password
     };
 
+    // Registrar usuario y enviar código de verificación
     await authStore.register(userData);
 
-    localStorage.setItem("user", JSON.stringify(userData))
-
     notificationStore.success(
-      t("auth.registerSuccess")
+      '¡Registro exitoso! Revisa tu email para el código de verificación'
     );
 
-    // Redirigir según el rol
+    // Redirigir a verificación de email
     setTimeout(() => {
-      if (formData.role === "admin") {
-        router.push("/admin");
-      } else if (
-        formData.role === "nutricionista"
-      ) {
-        router.push("/nutricionista");
-      } else {
-        router.push("/usuario");
-      }
+      router.push({
+        path: '/verificar-email',
+        query: {
+          email: userData.email
+        }
+      });
     }, 1000);
   } catch (error) {
     generalError.value =
@@ -687,17 +678,16 @@ async function handleRegister() {
   } finally {
     isLoading.value = false;
   }
-
-  onMounted(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      const user = JSON.parse(storedUser);
-      authStore.user = user; // Si tienes una variable 'user' en tu Pinia store
-      console.log("Usuario recuperado del localStorage:", user);
-    }
-  });
-
 }
+
+onMounted(() => {
+  const storedUser = localStorage.getItem("user");
+  if (storedUser) {
+    const user = JSON.parse(storedUser);
+    authStore.user = user;
+    console.log("Usuario recuperado del localStorage:", user);
+  }
+});
 </script>
 
 <style scoped>

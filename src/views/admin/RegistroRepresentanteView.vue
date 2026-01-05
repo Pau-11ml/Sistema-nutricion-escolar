@@ -1,14 +1,14 @@
 <template>
-  <div class="registro-nutricionista-view">
+  <div class="registro-representante-view">
     <!-- Encabezado -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
         <h1 class="h3 mb-1">
-          <i class="bi bi-clipboard2-pulse-fill me-2"></i>
-          {{ isEditing ? 'Editar Nutricionista' : 'Nuevo Nutricionista' }}
+          <i class="bi bi-person-badge-fill me-2"></i>
+          {{ isEditing ? 'Editar Representante' : 'Nuevo Representante' }}
         </h1>
         <p class="text-muted mb-0">
-          {{ isEditing ? 'Actualizar información del nutricionista' : 'Registrar un nuevo nutricionista en el sistema' }}
+          {{ isEditing ? 'Actualizar información del representante' : 'Registrar un nuevo representante en el sistema' }}
         </p>
       </div>
       <button class="btn btn-outline-secondary" @click="volver">
@@ -245,17 +245,17 @@
 import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useNotificationStore } from "@/stores/notification";
-import { useNutritionistsStore } from "@/stores/nutritionists";
+import { useRepresentativesStore } from "@/stores/representatives";
 
 const router = useRouter();
 const route = useRoute();
 const notificationStore = useNotificationStore();
-const nutritionistsStore = useNutritionistsStore();
+const representativesStore = useRepresentativesStore();
 
 const isLoading = ref(false);
 const mostrarPassword = ref(false);
 const isEditing = ref(false);
-const nutricionistaId = ref(null);
+const representanteId = ref(null);
 
 // Datos del formulario
 const formData = ref({
@@ -276,24 +276,24 @@ const errors = ref({});
 onMounted(() => {
   if (route.params.id) {
     isEditing.value = true;
-    nutricionistaId.value = route.params.id;
-    cargarNutricionista();
+    representanteId.value = route.params.id;
+    cargarRepresentante();
   }
 });
 
-function cargarNutricionista() {
-  const nutricionista = nutritionistsStore.getNutritionistById(nutricionistaId.value);
-  if (nutricionista) {
+function cargarRepresentante() {
+  const representante = representativesStore.getRepresentativeById(representanteId.value);
+  if (representante) {
     formData.value = {
-      nombres: nutricionista.nombres,
-      apellidos: nutricionista.apellidos,
-      cedula: nutricionista.cedula,
-      telefono: nutricionista.telefono,
-      email: nutricionista.email,
-      username: nutricionista.username,
+      nombres: representante.nombres,
+      apellidos: representante.apellidos,
+      cedula: representante.cedula,
+      telefono: representante.telefono,
+      email: representante.email,
+      username: representante.username,
       password: "",
       confirmPassword: "",
-      estado: nutricionista.estado || "activo"
+      estado: representante.estado || "activo"
     };
   }
 }
@@ -381,8 +381,8 @@ async function handleSubmit() {
   isLoading.value = true;
 
   try {
-    // Preparar datos del nutricionista
-    const nutricionistaData = {
+    // Preparar datos del representante
+    const representanteData = {
       nombres: formData.value.nombres,
       apellidos: formData.value.apellidos,
       cedula: formData.value.cedula,
@@ -394,31 +394,31 @@ async function handleSubmit() {
 
     // Solo incluir password si se ingresó (nuevo o cambio)
     if (formData.value.password) {
-      nutricionistaData.password = formData.value.password;
+      representanteData.password = formData.value.password;
     }
 
     if (isEditing.value) {
-      // Actualizar nutricionista existente
-      nutritionistsStore.updateNutritionist(nutricionistaId.value, nutricionistaData);
+      // Actualizar representante existente
+      representativesStore.updateRepresentative(representanteId.value, representanteData);
       notificationStore.addNotification({
         type: "success",
-        message: "Nutricionista actualizado correctamente"
+        message: "Representante actualizado correctamente"
       });
     } else {
-      // Crear nuevo nutricionista
-      nutritionistsStore.addNutritionist(nutricionistaData);
+      // Crear nuevo representante
+      representativesStore.addRepresentative(representanteData);
       notificationStore.addNotification({
         type: "success",
-        message: "Nutricionista registrado correctamente"
+        message: "Representante registrado correctamente"
       });
     }
 
-    router.push({ name: "admin-nutricionistas" });
+    router.push({ name: "admin-representantes" });
   } catch (error) {
-    console.error("Error al guardar el nutricionista:", error);
+    console.error("Error al guardar el representante:", error);
     notificationStore.addNotification({
       type: "error",
-      message: "Error al guardar el nutricionista"
+      message: "Error al guardar el representante"
     });
   } finally {
     isLoading.value = false;
@@ -441,12 +441,12 @@ function limpiarFormulario() {
 }
 
 function volver() {
-  router.push({ name: "admin-nutricionistas" });
+  router.push({ name: "admin-representantes" });
 }
 </script>
 
 <style scoped>
-.registro-nutricionista-view {
+.registro-representante-view {
   padding: 0;
 }
 

@@ -32,15 +32,18 @@
 
         <!-- Mensaje de bloqueo -->
         <div
-          v-if="authStore.isBlocked"
-          class="alert alert-warning d-flex align-items-center"
+          v-if="authStore.isBlocked && authStore.secondsUntilUnblock > 0"
+          class="alert alert-warning d-flex align-items-center justify-content-between"
           role="alert"
         >
-          <i class="bi bi-lock-fill me-2"></i>
-          <span
-            >Cuenta bloqueada por seguridad.
-            Intente más tarde.</span
-          >
+          <div>
+            <i class="bi bi-lock-fill me-2"></i>
+            <span>Cuenta bloqueada por seguridad.</span>
+          </div>
+          <div class="countdown-timer">
+            <i class="bi bi-clock me-2"></i>
+            <strong>{{ authStore.secondsUntilUnblock }}s</strong>
+          </div>
         </div>
 
         <!-- Formulario -->
@@ -228,7 +231,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useAuthStore } from "@/stores/auth";
@@ -253,6 +256,7 @@ const errors = reactive({
 const errorMessage = ref("");
 const isLoading = ref(false);
 const showPassword = ref(false);
+let blockCheckInterval = null;
 
 function validateForm() {
   errors.username = "";
@@ -311,11 +315,14 @@ async function handleLogin() {
       await router.push("/usuario");
     }
   } catch (error) {
-    errorMessage.value =
-      error.message || t("auth.loginError");
-    notificationStore.error(
-      error.message || t("auth.loginError")
-    );
+    errorMessage.value = error.message || t("auth.loginError");
+    
+    // Mostrar intentos restantes si hay información disponible
+    if (error.attemptsRemaining !== undefined && error.attemptsRemaining > 0) {
+      errorMessage.value += ` Te quedan ${error.attemptsRemaining} intento${error.attemptsRemaining !== 1 ? 's' : ''}.`;
+    }
+    
+    notificationStore.error(errorMessage.value);
   } finally {
     isLoading.value = false;
   }
@@ -325,6 +332,21 @@ function handleImageError(e) {
   e.target.src =
     'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80"%3E%3Crect fill="%230d6efd" width="80" height="80"/%3E%3Ctext x="50%25" y="50%25" fill="white" text-anchor="middle" dy=".3em" font-size="30" font-weight="bold"%3ESNE%3C/text%3E%3C/svg%3E';
 }
+
+onMounted(() => {
+  formData.rememberMe = authStore.rememberMe;
+  
+  // Verificar estado de bloqueo cada segundo
+  blockCheckInterval = setInterval(() => {
+    authStore.checkBlockStatus();
+  }, 1000);
+});
+
+onUnmounted(() => {
+  if (blockCheckInterval) {
+    clearInterval(blockCheckInterval);
+  }
+});
 </script>
 
 <style scoped>
@@ -495,6 +517,28 @@ function handleImageError(e) {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+.countdown-timer {
+  display: flex;
+  align-items: center;
+  font-size: 1.1rem;
+  color: #856404;
+  animation: pulse 1s infinite;
+}
+
+.countdown-timer strong {
+  font-size: 1.3rem;
+  color: #856404;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
   }
 }
 </style>

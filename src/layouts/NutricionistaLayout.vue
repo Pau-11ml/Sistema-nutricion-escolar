@@ -18,9 +18,9 @@
 
       <main class="main-content" role="main">
         <div class="container-fluid py-4">
-          <RouterView v-slot="{ Component }">
+          <RouterView v-slot="{ Component, route }">
             <Transition name="page" mode="out-in">
-              <component :is="Component" />
+              <component :is="Component" :key="route.path" />
             </Transition>
           </RouterView>
         </div>
@@ -28,6 +28,8 @@
     </div>
 
     <AppFooter />
+    <HelpButton />
+    <TextSelectionReader />
   </div>
 </template>
 
@@ -37,6 +39,8 @@ import { useRoute } from "vue-router";
 import AppHeader from "@/components/common/AppHeader.vue";
 import AppSidebar from "@/components/common/AppSidebar.vue";
 import AppFooter from "@/components/common/AppFooter.vue";
+import HelpButton from "@/components/common/HelpButton.vue";
+import TextSelectionReader from "@/components/common/TextSelectionReader.vue";
 
 const route = useRoute();
 const isSidebarExpanded = ref(true);
@@ -59,11 +63,16 @@ const nutricionistaMenuItems = [
     key: "menu",
   },
   {
-    path: "#",
-    label: "Crear Recordatorio",
-    icon: "bi-bell-fill",
-    key: "recordatorio",
-    action: "crear-recordatorio",
+    path: "/nutricionista/recomendaciones",
+    label: "Recomendaciones",
+    icon: "bi-heart-pulse",
+    key: "recomendaciones",
+  },
+  {
+    path: "/nutricionista/alertas",
+    label: "Alertas/Notificaciones",
+    icon: "bi-bell",
+    key: "alertas",
   },
   {
     path: "#",
@@ -91,8 +100,9 @@ const nutricionistaMenuItems = [
 const currentPageTitle = computed(() => {
   const titles = {
     "/nutricionista": "Panel Nutricionista",
-    "/nutricionista/menu-semanal":
-      "Gestión Menú Semanal",
+    "/nutricionista/menu-semanal": "Gestión Menú Semanal",
+    "/nutricionista/recomendaciones": "Recomendaciones Nutricionales",
+    "/nutricionista/alertas": "Alertas y Notificaciones",
   };
   return titles[route.path] || "";
 });

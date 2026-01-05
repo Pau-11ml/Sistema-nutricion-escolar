@@ -183,5 +183,15 @@
     "maxLength": "Must be at most {max} characters",
     "passwordMismatch": "Passwords do not match",
     "passwordMin": "Password must be at least 8 characters"
+  },
+  "help": {
+    "button": "Help button",
+    "close": "Close help",
+    "understood": "Understood"
+  },
+  "errors": {
+    "pageNotFound": "Page Not Found",
+    "pageNotFoundMessage": "Sorry, the page you are looking for does not exist or has been moved.",
+    "suggestions": "What would you like to do?"
   }
 }
